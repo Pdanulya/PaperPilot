@@ -1,0 +1,36 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database (if local sqlite used later)
+*.sqlite3
+
+# Uploads (important for your project)
+uploads/
+media/
+
+# Test files
+.pytest_cache/
+
+# FastAPI / Uvicorn cache
+*.pid
