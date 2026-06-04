@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.db.deps import get_db
 from app.models.document import Document
 from app.core.dependencies import get_current_user
+from app.schemas.document import DocumentResponse
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -47,12 +48,12 @@ def upload_document(
     extension = os.path.splitext(file.filename)[1].lower()
     unique_filename = f"{uuid.uuid4()}{extension}"
     file_location = f"uploads/{unique_filename}"
-    # file_location = f"uploads/{file.filename}"
 
     os.makedirs("uploads", exist_ok=True)
     with open(file_location, "wb") as buffer:
-        buffer.write(file.file.read())
-
+        while chunk := file.file.read(1024 * 1024):
+            buffer.write(chunk)
+            
     document = Document(
         title=file.filename,
         file_type=extension,
@@ -63,10 +64,11 @@ def upload_document(
     db.commit()
     db.refresh(document)
         
-    return {
-        "id": document.id,
-        "title": document.title,
-        "file_type": document.file_type,
-        "file_path": document.file_path,
-        "uploaded_at": document.uploaded_at
-    }
+    return DocumentResponse(
+        id=document.id,
+        title=document.title,
+        file_type=document.file_type,
+        file_path=document.file_path,
+        uploaded_at=document.uploaded_at
+    )
+    
