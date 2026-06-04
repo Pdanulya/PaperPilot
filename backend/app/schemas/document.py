@@ -1,0 +1,12 @@
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
+
+class DocumentResponse(BaseModel):
+    id: int
+    title: str
+    file_type: str
+    file_path: str
+    uploaded_at: datetime
+    # user_id: int
+
+    model_config = ConfigDict(from_attributes=True)
