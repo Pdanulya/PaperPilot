@@ -71,7 +71,8 @@ def upload_document(
         file_path=document.file_path,
         uploaded_at=document.uploaded_at
     )
-    
+
+# This endpoint retrieves all documents uploaded by the authenticated user. It queries the database for documents associated with the user's ID and returns them as a list.   
 @router.get("/")
 def get_documents(
     db: Session = Depends(get_db),
@@ -83,6 +84,7 @@ def get_documents(
 
     return documents
 
+# This endpoint retrieves a specific document by its ID, but only if it belongs to the authenticated user. It checks the database for a document with the given ID and user ID, and returns it if found. If the document does not exist or does not belong to the user, it raises a 404 error.
 @router.get("/{doc_id}")
 def get_document(
     doc_id: int,
