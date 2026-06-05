@@ -84,7 +84,7 @@ def get_documents(
 
     return documents
 
-# This endpoint retrieves a specific document by its ID, but only if it belongs to the authenticated user. It checks the database for a document with the given ID and user ID, and returns it if found. If the document does not exist or does not belong to the user, it raises a 404 error.
+# This endpoint retrieves a specific document by its ID, but only if it belongs to the authenticated user. It checks the database for a document with the given ID and user ID, and returns it if found.
 @router.get("/{doc_id}")
 def get_document(
     doc_id: int,
@@ -104,7 +104,7 @@ def get_document(
 
     return document
 
-@router.delete("/{doc_id}")
+# This endpoint allows the authenticated user to delete a specific document by its ID. It checks if the document exists and belongs to the user, and if so, it deletes the document from the database and returns a success message. 
 def delete_document(
     doc_id: int,
     db: Session = Depends(get_db),
