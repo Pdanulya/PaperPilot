@@ -101,3 +101,25 @@ def get_document(
         )
 
     return document
+
+@router.delete("/{doc_id}")
+def delete_document(
+    doc_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    document = db.query(Document)\
+        .filter(Document.id == doc_id,
+                Document.user_id == current_user.id)\
+        .first()
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+
+    db.delete(document)
+    db.commit()
+
+    return {"message": "Document deleted successfully"}
