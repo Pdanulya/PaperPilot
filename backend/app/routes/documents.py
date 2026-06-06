@@ -9,6 +9,7 @@ import uuid
 import os
 
 from sqlalchemy.orm import Session
+from typing import List
 
 from app.db.deps import get_db
 from app.models.document import Document
@@ -73,7 +74,11 @@ def upload_document(
     )
 
 # This endpoint retrieves all documents uploaded by the authenticated user. It queries the database for documents associated with the user's ID and returns them as a list.   
-@router.get("/")
+@router.get(
+    "/",
+    response_model=List[DocumentResponse]
+)
+
 def get_documents(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
@@ -85,7 +90,11 @@ def get_documents(
     return documents
 
 # This endpoint retrieves a specific document by its ID, but only if it belongs to the authenticated user. It checks the database for a document with the given ID and user ID, and returns it if found.
-@router.get("/{doc_id}")
+@router.get(
+    "/{doc_id}",
+    response_model=DocumentResponse
+)
+
 def get_document(
     doc_id: int,
     db: Session = Depends(get_db),
@@ -105,6 +114,9 @@ def get_document(
     return document
 
 # This endpoint allows the authenticated user to delete a specific document by its ID. It checks if the document exists and belongs to the user, and if so, it deletes the document from the database and returns a success message. 
+@router.delete(
+    "/{doc_id}"
+)
 def delete_document(
     doc_id: int,
     db: Session = Depends(get_db),
@@ -123,7 +135,7 @@ def delete_document(
 
     if os.path.exists(document.file_path):
         os.remove(document.file_path)
-        
+
     db.delete(document)
     db.commit()
 
