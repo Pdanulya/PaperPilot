@@ -121,6 +121,9 @@ def delete_document(
             detail="Document not found"
         )
 
+    if os.path.exists(document.file_path):
+        os.remove(document.file_path)
+        
     db.delete(document)
     db.commit()
 
