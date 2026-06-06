@@ -23,7 +23,6 @@ router = APIRouter(prefix="/documents", tags=["Documents"])
     "/upload",
     response_model=DocumentResponse
 )
-
 def upload_document(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -65,20 +64,13 @@ def upload_document(
     db.commit()
     db.refresh(document)
         
-    return DocumentResponse(
-        id=document.id,
-        title=document.title,
-        file_type=document.file_type,
-        file_path=document.file_path,
-        uploaded_at=document.uploaded_at
-    )
+    return document
 
 # This endpoint retrieves all documents uploaded by the authenticated user. It queries the database for documents associated with the user's ID and returns them as a list.   
 @router.get(
     "/",
     response_model=List[DocumentResponse]
 )
-
 def get_documents(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
@@ -94,7 +86,6 @@ def get_documents(
     "/{doc_id}",
     response_model=DocumentResponse
 )
-
 def get_document(
     doc_id: int,
     db: Session = Depends(get_db),
