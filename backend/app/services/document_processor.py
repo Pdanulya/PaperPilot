@@ -3,6 +3,7 @@
 # python-docx to read docx files
 # In build python simple file reading to read txt files
 
+import os
 import fitz
 from docx import Document as DocxDocument
 
@@ -31,3 +32,18 @@ def extract_pdf_text(file_path: str):
     pdf.close()
 
     return "\n".join(text)
+
+def extract_text(file_path: str):
+    extension = os.path.splitext(file_path)[1].lower()
+
+    if extension == ".pdf":
+        return extract_pdf_text(file_path)
+
+    elif extension == ".docx":
+        return extract_docx_text(file_path)
+
+    elif extension == ".txt":
+        return extract_txt_text(file_path)
+
+    else:
+        raise ValueError("Unsupported file type")

@@ -55,7 +55,13 @@ def upload_document(
         while chunk := file.file.read(1024 * 1024):
             buffer.write(chunk)
 
-    raw_text = extract_text(file_location)
+    try:
+        raw_text = extract_text(file_location)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to process document: {str(e)}"
+        )
             
     document = Document(
         title=file.filename,
@@ -135,18 +141,3 @@ def delete_document(
     db.commit()
 
     return {"message": "Document deleted successfully"}
-
-def extract_text(file_path: str):
-    extension = os.path.splitext(file_path)[1].lower()
-
-    if extension == ".pdf":
-        return extract_pdf_text(file_path)
-
-    elif extension == ".docx":
-        return extract_docx_text(file_path)
-
-    elif extension == ".txt":
-        return extract_txt_text(file_path)
-
-    else:
-        raise ValueError("Unsupported file type")
