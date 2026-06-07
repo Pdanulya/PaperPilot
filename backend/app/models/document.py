@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from datetime import datetime
 
 from app.db.database import Base
@@ -18,3 +18,4 @@ class Document(Base):
         Integer,
         ForeignKey("users.id")
     )
+    raw_text = Column(Text, nullable=True) # To store extracted text from documents
