@@ -15,6 +15,7 @@ from app.db.deps import get_db
 from app.models.document import Document
 from app.core.dependencies import get_current_user
 from app.schemas.document import DocumentResponse
+from app.services.document_processor import extract_text
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -53,11 +54,14 @@ def upload_document(
     with open(file_location, "wb") as buffer:
         while chunk := file.file.read(1024 * 1024):
             buffer.write(chunk)
+
+    raw_text = extract_text(file_location)
             
     document = Document(
         title=file.filename,
         file_type=extension,
         file_path=file_location,
+        raw_text=raw_text,
         user_id=current_user.id
     )
     db.add(document)
@@ -131,3 +135,18 @@ def delete_document(
     db.commit()
 
     return {"message": "Document deleted successfully"}
+
+def extract_text(file_path: str):
+    extension = os.path.splitext(file_path)[1].lower()
+
+    if extension == ".pdf":
+        return extract_pdf_text(file_path)
+
+    elif extension == ".docx":
+        return extract_docx_text(file_path)
+
+    elif extension == ".txt":
+        return extract_txt_text(file_path)
+
+    else:
+        raise ValueError("Unsupported file type")

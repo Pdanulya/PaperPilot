@@ -1,3 +1,8 @@
+# Libraries Used:
+# PyMuPDF to read pdf files
+# python-docx to read docx files
+# In build python simple file reading to read txt files
+
 import fitz
 from docx import Document as DocxDocument
 
