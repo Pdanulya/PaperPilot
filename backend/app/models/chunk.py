@@ -30,3 +30,14 @@ class DocumentChunk(Base):
         Text,
         nullable=False
     )
+
+# How chunks are structured in the database:
+# document_chunks
+# ├── id=1
+# ├── document_id=1
+# ├── chunk_index=0
+
+# document_chunks
+# ├── id=2
+# ├── document_id=1
+# ├── chunk_index=1
