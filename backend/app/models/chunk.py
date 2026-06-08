@@ -9,27 +9,10 @@ from app.db.database import Base
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
-
-    document_id = Column(
-        Integer,
-        ForeignKey("documents.id"),
-        nullable=False
-    )
-
-    chunk_index = Column(
-        Integer,
-        nullable=False
-    )
-
-    content = Column(
-        Text,
-        nullable=False
-    )
+    id = Column(Integer, primary_key=True, index=True)
+    document_id = Column(Integer, ForeignKey("documents.id"), nullable=False)
+    chunk_index = Column(Integer, nullable=False)
+    content = Column(Text, nullable=False)
 
 # How chunks are structured in the database:
 # document_chunks
