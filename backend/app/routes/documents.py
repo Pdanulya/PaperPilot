@@ -12,10 +12,14 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.db.deps import get_db
-from app.models.document import Document
 from app.core.dependencies import get_current_user
+
+from app.models.document import Document
 from app.schemas.document import DocumentResponse
 from app.services.document_processor import extract_text
+
+from app.models.chunk import DocumentChunk
+from app.services.chunking_service import chunk_text
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -73,7 +77,19 @@ def upload_document(
     db.add(document)
     db.commit()
     db.refresh(document)
-        
+
+    chunks = chunk_text(raw_text)
+    for chunk in chunks:
+        document_chunk = DocumentChunk(
+            document_id=document.id,
+            chunk_index=chunk["index"],
+            content=chunk["content"]
+        )
+
+        db.add(document_chunk)
+
+    db.commit()
+            
     return document
 
 # This endpoint retrieves all documents uploaded by the authenticated user. It queries the database for documents associated with the user's ID and returns them as a list.   
