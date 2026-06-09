@@ -67,7 +67,7 @@ def upload_document(
             detail=f"Failed to process document: {str(e)}"
         )
 
-    # Create a new document entry(object) in the database       
+    # Create a new document row(entry/object) in the database       
     document = Document(
         title=file.filename,
         file_type=extension,
@@ -81,7 +81,7 @@ def upload_document(
 
     chunks = chunk_text(raw_text)
     for chunk in chunks:
-        # Create a new document chunk entry in the database for each chunk of text
+        # Create a new document chunk row(entry) in the database for each chunk of text
         document_chunk = DocumentChunk(
             document_id=document.id,
             chunk_index=chunk["index"],
