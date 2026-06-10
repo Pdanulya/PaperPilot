@@ -6,7 +6,7 @@ from functools import lru_cache
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
-
+# Function to get the embedding for a given text
 def get_embedding(text: str):
     model = load_model()
     return model.encode(text).tolist()
