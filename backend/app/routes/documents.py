@@ -1,3 +1,4 @@
+from app.services.embedding_service import get_embedding
 from fastapi import (
     APIRouter,
     Depends,
@@ -82,10 +83,15 @@ def upload_document(
     chunks = chunk_text(raw_text)
     for chunk in chunks:
         # Create a new document chunk row(entry) in the database for each chunk of text
+        vector = get_embedding(
+            chunk["content"]
+        )
+        
         document_chunk = DocumentChunk(
             document_id=document.id,
             chunk_index=chunk["index"],
-            content=chunk["content"]
+            content=chunk["content"],
+            embedding=vector
         )
 
         db.add(document_chunk)
