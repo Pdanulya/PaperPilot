@@ -98,7 +98,7 @@ def upload_document(
                 )
             )
 
-        db.bulk_save_objects(db_chunk_objects)
+        db.add_all(db_chunk_objects)
 
         db.commit()
 
