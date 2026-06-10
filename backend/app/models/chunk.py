@@ -5,6 +5,7 @@ from sqlalchemy import (
     Text
 )
 from app.db.database import Base
+from pgvector.sqlalchemy import Vector
 
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
@@ -13,7 +14,8 @@ class DocumentChunk(Base):
     document_id = Column(Integer, ForeignKey("documents.id"), nullable=False)
     chunk_index = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
-
+    embedding = Column(Vector(384), nullable=True)
+    
 # How chunks are structured in the database:
 # document_chunks
 # ├── id=1
