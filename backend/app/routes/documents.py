@@ -16,10 +16,10 @@ from app.db.deps import get_db
 from app.core.dependencies import get_current_user
 
 from app.models.document import Document
+from app.models.chunk import DocumentChunk
+
 from app.schemas.document import DocumentResponse
 from app.services.document_processor import extract_text
-
-from app.models.chunk import DocumentChunk
 from app.services.chunking_service import chunk_text
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
@@ -68,35 +68,46 @@ def upload_document(
             detail=f"Failed to process document: {str(e)}"
         )
 
-    # Create a new document row(entry/object) in the database       
-    document = Document(
-        title=file.filename,
-        file_type=extension,
-        file_path=file_location,
-        raw_text=raw_text,
-        user_id=current_user.id
-    )
-    db.add(document)
-    db.commit()
-    db.refresh(document)
-
-    chunks = chunk_text(raw_text)
-    for chunk in chunks:
-        # Create a new document chunk row(entry) in the database for each chunk of text
-        vector = get_embedding(
-            chunk["content"]
-        )
-        
-        document_chunk = DocumentChunk(
-            document_id=document.id,
-            chunk_index=chunk["index"],
-            content=chunk["content"],
-            embedding=vector
+    try:
+        # Create document
+        document = Document(
+            title=file.filename,
+            file_type=extension,
+            file_path=file_location,
+            raw_text=raw_text,
+            user_id=current_user.id
         )
 
-        db.add(document_chunk)
+        db.add(document)
+        db.commit()
+        db.refresh(document)
 
-    db.commit()
+        chunks = chunk_text(raw_text)
+
+        db_chunk_objects = []
+
+        for chunk in chunks:
+            vector = get_embedding(chunk["content"])
+
+            db_chunk_objects.append(
+                DocumentChunk(
+                    document_id=document.id,
+                    chunk_index=chunk["index"],
+                    content=chunk["content"],
+                    embedding=vector
+                )
+            )
+
+        db.bulk_save_objects(db_chunk_objects)
+
+        db.commit()
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Upload failed during processing: {str(e)}"
+        )
             
     return document
 
