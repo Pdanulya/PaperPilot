@@ -15,7 +15,7 @@ def retrieve_relevant_chunks(
             content
         FROM document_chunks
         WHERE document_id = :document_id
-        ORDER BY embedding <=> :embedding
+        ORDER BY embedding <=> :embedding AS distance
         LIMIT :limit
     """)
 
@@ -23,7 +23,7 @@ def retrieve_relevant_chunks(
         sql,
         {
             "document_id": document_id,
-            "embedding": str(query_embedding),
+            "embedding": f"[{','.join(map(str, query_embedding))}]",
             "limit": limit
         }
     )
