@@ -1,4 +1,3 @@
-from app.services.embedding_service import get_embedding
 from fastapi import (
     APIRouter,
     Depends,
@@ -21,6 +20,7 @@ from app.models.chunk import DocumentChunk
 from app.schemas.document import DocumentResponse
 from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
+from app.services.embedding_service import get_embedding
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
