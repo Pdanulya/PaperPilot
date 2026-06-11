@@ -21,6 +21,7 @@ from app.schemas.document import DocumentResponse
 from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
 from app.services.embedding_service import get_embedding
+from app.services.retrieval_service import retrieve_relevant_chunks
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -176,3 +177,46 @@ def delete_document(
     db.commit()
 
     return {"message": "Document deleted successfully"}
+
+
+@router.post("/search")
+def search_document(
+    request: SearchRequest,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    
+    document = (
+        db.query(Document)
+        .filter(
+            Document.id == request.document_id,
+            Document.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+
+    query_embedding = get_embedding(request.query)
+
+    relevant_chunks = retrieve_relevant_chunks(
+        db,
+        request.document_id,
+        query_embedding,
+        limit=5
+    )
+
+    return {
+        "chunks": [
+            {
+                "id": chunk.id,
+                "content": chunk.content
+            }
+            for chunk in relevant_chunks
+        ]
+    }
+
