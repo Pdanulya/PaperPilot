@@ -191,7 +191,10 @@ def search_document(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    
+    # Verify the document user request exists and belongs to that user
+    # SELECT * FROM documents
+    # WHERE id = document_id
+    # AND user_id = current_user.id
     document = (
         db.query(Document)
         .filter(
@@ -207,8 +210,10 @@ def search_document(
             detail="Document not found"
         )
 
+    # Convert user question to embedding vector
     query_embedding = get_embedding(request.query)
 
+    # search only the requested document and retrieve relevant chunks 
     relevant_chunks = retrieve_relevant_chunks(
         db,
         document_id,
