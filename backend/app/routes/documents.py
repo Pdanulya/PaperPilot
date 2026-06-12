@@ -221,6 +221,7 @@ def search_document(
         limit=5
     )
 
+    # Return the search results as a list of chunks with their content and IDs. The chunks are ordered by relevance based on the distance between their embeddings and the query embedding.
     return SearchResponse(
         chunks=[
             ChunkResponse(
