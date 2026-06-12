@@ -18,6 +18,8 @@ from app.models.document import Document
 from app.models.chunk import DocumentChunk
 
 from app.schemas.document import DocumentResponse
+from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
+
 from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
 from app.services.embedding_service import get_embedding
@@ -179,8 +181,12 @@ def delete_document(
     return {"message": "Document deleted successfully"}
 
 
-@router.post("/search")
+@router.post(
+        "/{document_id}/search",
+        response_model=SearchResponse
+    )
 def search_document(
+    document_id: int,
     request: SearchRequest,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
@@ -189,7 +195,7 @@ def search_document(
     document = (
         db.query(Document)
         .filter(
-            Document.id == request.document_id,
+            Document.id == document_id,
             Document.user_id == current_user.id
         )
         .first()
@@ -205,18 +211,18 @@ def search_document(
 
     relevant_chunks = retrieve_relevant_chunks(
         db,
-        request.document_id,
+        document_id,
         query_embedding,
         limit=5
     )
 
-    return {
-        "chunks": [
-            {
-                "id": chunk.id,
-                "content": chunk.content
-            }
+    return SearchResponse(
+        chunks=[
+            ChunkResponse(
+                id=chunk.id,
+                content=chunk.content
+            )
             for chunk in relevant_chunks
         ]
-    }
+    )
 

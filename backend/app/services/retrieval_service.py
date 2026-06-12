@@ -15,9 +15,11 @@ def retrieve_relevant_chunks(
             content
         FROM document_chunks
         WHERE document_id = :document_id
-        ORDER BY embedding <=> :embedding AS distance
+        ORDER BY embedding <=> :embedding
         LIMIT :limit
     """)
+    # Calculate distance between chunk embedding and query embedding. 
+    # Smaller distance means more relevant and that chunk will be retrieved.
 
     result = db.execute(
         sql,
