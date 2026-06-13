@@ -206,7 +206,12 @@ def delete_document(
             detail="Document not found"
         )
     
-    # Delete from Cloudinary if public_id exists
+    # 1. Delete chunks first (child records)
+    db.query(DocumentChunk)\
+        .filter(DocumentChunk.document_id == doc_id)\
+        .delete()
+    
+    # 2. Delete from Cloudinary if it exists
     if document.cloudinary_public_id:
         delete_document_from_cloudinary(document.cloudinary_public_id)
 
