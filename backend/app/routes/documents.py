@@ -23,7 +23,6 @@ from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.summary import SummaryResponse
 
-from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
 from app.services.embedding_service import get_embedding
 from app.services.retrieval_service import retrieve_relevant_chunks
