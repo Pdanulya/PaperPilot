@@ -141,7 +141,7 @@ def upload_document(
 
         # Clean up Cloudinary upload if DB fails
         delete_document_from_cloudinary(cloudinary_result["public_id"])
-        
+
         raise HTTPException(
             status_code=500,
             detail=f"Upload failed during processing: {str(e)}"
@@ -206,9 +206,13 @@ def delete_document(
             status_code=404,
             detail="Document not found"
         )
+    
+    # Delete from Cloudinary if public_id exists
+    if document.cloudinary_public_id:
+        delete_document_from_cloudinary(document.cloudinary_public_id)
 
-    if os.path.exists(document.file_path):
-        os.remove(document.file_path)
+    # if os.path.exists(document.file_path):
+    #     os.remove(document.file_path)
 
     db.delete(document)
     db.commit()
