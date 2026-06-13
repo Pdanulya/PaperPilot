@@ -20,6 +20,7 @@ from app.models.chunk import DocumentChunk
 from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
 from app.schemas.chat import ChatRequest, ChatResponse
+from app.schemas.summary import SummaryResponse
 
 from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
@@ -27,6 +28,7 @@ from app.services.embedding_service import get_embedding
 from app.services.retrieval_service import retrieve_relevant_chunks
 from app.services.rag_service import build_context
 from app.services.llm_service import generate_answer
+from app.services.summary_service import generate_summary
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -278,3 +280,34 @@ def chat_with_document(
     )
 
     return ChatResponse(answer=answer)
+
+@router.post(
+    "/{document_id}/summary",
+    response_model=SummaryResponse
+)
+def generate_document_summary(
+    document_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    document = (
+        db.query(Document)
+        .filter(
+            Document.id == document_id,
+            Document.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+    
+    summary_text = generate_summary(document.raw_text)
+
+    return SummaryResponse(
+    document_id=document_id,
+    summary=summary_text
+)
