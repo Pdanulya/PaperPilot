@@ -7,6 +7,7 @@ from fastapi import (
 )
 import uuid
 import os
+import io
 
 from sqlalchemy.orm import Session
 from typing import List
@@ -29,6 +30,10 @@ from app.services.retrieval_service import retrieve_relevant_chunks
 from app.services.rag_service import build_context
 from app.services.llm_service import generate_answer
 from app.services.summary_service import generate_summary
+from app.services.document_processor import extract_text_from_bytes
+
+from app.core.config import *   
+from app.services.cloudinary_service import (upload_document_to_cloudinary, delete_document_from_cloudinary)
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -60,28 +65,49 @@ def upload_document(
         )
     
     extension = os.path.splitext(file.filename)[1].lower()
-    unique_filename = f"{uuid.uuid4()}{extension}"
-    file_location = f"uploads/{unique_filename}"
 
-    os.makedirs("uploads", exist_ok=True)
-    with open(file_location, "wb") as buffer:
-        while chunk := file.file.read(1024 * 1024):
-            buffer.write(chunk)
+    # Read file bytes into memory — no local disk write needed
+    file_bytes = file.file.read()
 
+    # Extract text BEFORE uploading (works from bytes)
     try:
-        raw_text = extract_text(file_location)
+        raw_text = extract_text_from_bytes(file_bytes, extension)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Failed to process document: {str(e)}"
-        )
+        raise HTTPException(status_code=400, detail=f"Failed to process document: {str(e)}")
+
+    # Upload to Cloudinary
+    import uuid
+    unique_name = f"{uuid.uuid4()}{extension}"
+    cloudinary_result = upload_document_to_cloudinary(
+        file_bytes,
+        unique_name,
+        current_user.id
+    )
+
+    # unique_filename = f"{uuid.uuid4()}{extension}"
+    # file_location = f"uploads/{unique_filename}"
+
+    # os.makedirs("uploads", exist_ok=True)
+    # with open(file_location, "wb") as buffer:
+    #     while chunk := file.file.read(1024 * 1024):
+    #         buffer.write(chunk)
+
+    # try:
+    #     raw_text = extract_text(file_location)
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail=f"Failed to process document: {str(e)}"
+    #     )
 
     try:
         # Create document
         document = Document(
             title=file.filename,
             file_type=extension,
-            file_path=file_location,
+            file_path=cloudinary_result["secure_url"],      
+            cloudinary_public_id=cloudinary_result["public_id"],
+            cloudinary_url=cloudinary_result["secure_url"],
             raw_text=raw_text,
             user_id=current_user.id
         )
@@ -112,6 +138,10 @@ def upload_document(
 
     except Exception as e:
         db.rollback()
+
+        # Clean up Cloudinary upload if DB fails
+        delete_document_from_cloudinary(cloudinary_result["public_id"])
+        
         raise HTTPException(
             status_code=500,
             detail=f"Upload failed during processing: {str(e)}"
