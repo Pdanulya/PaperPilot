@@ -10,6 +10,8 @@ class Document(Base):
     title = Column(String)
     file_type = Column(String)
     file_path = Column(String)
+    cloudinary_public_id = Column(String, nullable=True)  
+    cloudinary_url = Column(String, nullable=True)
     uploaded_at = Column(
         DateTime,
         default=datetime.utcnow
