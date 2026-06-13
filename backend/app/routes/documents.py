@@ -19,11 +19,14 @@ from app.models.chunk import DocumentChunk
 
 from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
+from app.schemas.chat import ChatRequest, ChatResponse
 
 from app.services.document_processor import extract_text
 from app.services.chunking_service import chunk_text
 from app.services.embedding_service import get_embedding
 from app.services.retrieval_service import retrieve_relevant_chunks
+from app.services.rag_service import build_context
+from app.services.llm_service import generate_answer
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -232,3 +235,46 @@ def search_document(
         ]
     )
 
+@router.post(
+    "/{document_id}/chat",
+    response_model=ChatResponse
+)
+def chat_with_document(
+    document_id: int,
+    request: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    document = (
+        db.query(Document)
+        .filter(
+            Document.id == document_id,
+            Document.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+    
+    query_embedding = get_embedding(request.query)
+
+    chunks = retrieve_relevant_chunks(
+        db,
+        document_id,
+        query_embedding,
+        limit=5
+    )
+
+    # Build a human-readable context string from the retrieved chunks to provide to the LLM. 
+    context = build_context(chunks)
+
+    answer = generate_answer(
+        request.query,
+        context
+    )
+
+    return ChatResponse(answer=answer)
