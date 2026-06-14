@@ -17,6 +17,7 @@ from app.core.dependencies import get_current_user
 
 from app.models.document import Document
 from app.models.chunk import DocumentChunk
+from app.models.chat_message import ChatMessage
 
 from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
@@ -316,6 +317,31 @@ def chat_with_document(
         request.query,
         context
     )
+
+    # ---- Save both sides of the conversation ----
+
+    # Save the user's question first
+    user_message = ChatMessage(
+        document_id=document_id,
+        user_id=current_user.id,
+        role="user",
+        content=request.query
+    )
+    db.add(user_message)
+
+    # Save the AI's answer immediately after
+    assistant_message = ChatMessage(
+        document_id=document_id,
+        user_id=current_user.id,
+        role="assistant",
+        content=answer
+    )
+    db.add(assistant_message)
+
+    # Commit both in one transaction — either both save or neither does
+    db.commit()
+
+    # ---- END ----
 
     return ChatResponse(answer=answer)
 
