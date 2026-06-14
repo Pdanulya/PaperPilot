@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from app.routes.auth import router as auth_router
-# from app.db.database import engine, Base
-# from app.models.user import User
 from app.routes.user import router as user_router
 from app.routes.documents import router as documents_router
+from app.routes.chat_history import router as chat_history_router
 from fastapi.openapi.utils import get_openapi
 
 app = FastAPI(
@@ -15,7 +14,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(documents_router)
-
+app.include_router(chat_history_router)
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "PaperPilot backend is running"}
