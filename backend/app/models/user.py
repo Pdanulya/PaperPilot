@@ -13,3 +13,5 @@ class User(Base):
     hashed_password = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     chat_messages = relationship("ChatMessage", back_populates="user")
+    saved_documents = relationship("SavedDocument", back_populates="user")
+    document_views = relationship("DocumentView", back_populates="user")
