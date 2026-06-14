@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, func, UniqueConstraint
 from sqlalchemy.orm import relationship
-from app.db.base import Base
+from app.db.database import Base
 
 class SavedDocument(Base):
     __tablename__ = "saved_documents"
