@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
+# What the API RETURNS (Schema filters it down)
 class DocumentResponse(BaseModel):
     id: int
     title: str
