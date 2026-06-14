@@ -12,6 +12,7 @@ from app.schemas.chat_history import ChatHistoryResponse, ChatMessageResponse
 router = APIRouter(prefix="/documents", tags=["Chat History"])
 
 
+# Fetch chat history related to a document:
 @router.get(
     "/{document_id}/history",
     response_model=ChatHistoryResponse
@@ -33,7 +34,7 @@ def get_chat_history(
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # Get total count first — useful for frontend pagination
+    # Gets the total number of messages before applying limit/offset
     total = db.query(ChatMessage).filter(
         ChatMessage.document_id == document_id,
         ChatMessage.user_id == current_user.id
@@ -55,6 +56,7 @@ def get_chat_history(
     )
 
 
+# Clear chat history for a document:
 @router.delete(
     "/{document_id}/history"
 )
@@ -83,10 +85,10 @@ def clear_chat_history(
     return {"message": f"Cleared {deleted} messages from chat history"}
 
 
+# Download chat history as a text file:
 @router.get(
     "/{document_id}/history/download",
-    response_class=PlainTextResponse  
-    # Returns plain text so browser can download it directly
+    response_class=PlainTextResponse  # Returns plain text so browser can download it directly
 )
 def download_chat_history(
     document_id: int,
@@ -101,6 +103,7 @@ def download_chat_history(
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
 
+    # Fetches all messages with no limit since we're downloading the entire history
     messages = db.query(ChatMessage).filter(
         ChatMessage.document_id == document_id,
         ChatMessage.user_id == current_user.id
