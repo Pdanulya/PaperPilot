@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 from app.db.database import Base
 
@@ -21,3 +22,5 @@ class Document(Base):
         ForeignKey("users.id")
     )
     raw_text = Column(Text, nullable=True) # To store extracted text from documents
+    chat_messages = relationship("ChatMessage", back_populates="document", cascade="all, delete-orphan")
+    # cascade means: when document is deleted, all its chat messages are deleted too
