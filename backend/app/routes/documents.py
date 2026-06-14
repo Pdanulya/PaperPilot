@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -18,6 +20,8 @@ from app.core.dependencies import get_current_user
 from app.models.document import Document
 from app.models.chunk import DocumentChunk
 from app.models.chat_message import ChatMessage
+from app.models.saved_document import SavedDocument
+from app.models.document_view import DocumentView
 
 from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
@@ -36,6 +40,7 @@ from app.core.config import *
 from app.services.cloudinary_service import (upload_document_to_cloudinary, delete_document_from_cloudinary)
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
+
 
 # This endpoint allows authenticated users to upload documents. It accepts a file, saves it to the server, and creates a corresponding entry in the database.
 @router.post(
@@ -149,6 +154,7 @@ def upload_document(
             
     return document
 
+
 # This endpoint retrieves all documents uploaded by the authenticated user. It queries the database for documents associated with the user's ID and returns them as a list.   
 @router.get(
     "/",
@@ -163,6 +169,7 @@ def get_documents(
         .all()
 
     return documents
+
 
 # This endpoint retrieves a specific document by its ID, but only if it belongs to the authenticated user. It checks the database for a document with the given ID and user ID, and returns it if found.
 @router.get(
@@ -184,6 +191,24 @@ def get_document(
             status_code=404,
             detail="Document not found"
         )
+    
+    # Check if a view record already exists for this user + document
+    existing_view = db.query(DocumentView).filter(
+        DocumentView.document_id == doc_id,
+        DocumentView.user_id == current_user.id
+    ).first()
+
+    if existing_view:
+        # Already exists — just update the timestamp to now
+        existing_view.last_viewed_at = func.now()
+    else:
+        # First time opening — create a new record
+        db.add(DocumentView(
+            document_id=doc_id,
+            user_id=current_user.id
+        ))
+
+    db.commit()
 
     return document
 
