@@ -1,6 +1,6 @@
 # Schemas define:
     # What data we expect from frontend
-    # What data we return
+    # What data json return
 
 from pydantic import BaseModel, EmailStr
 
