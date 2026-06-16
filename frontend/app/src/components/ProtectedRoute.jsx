@@ -1,15 +1,10 @@
 import { Navigate } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-
-  console.log("TOKEN:", token); 
-
-  if (!token) {
-    return <Navigate to="/login" replace/>;
-  }
-
+// Wraps any route that requires authentication
+// Redirects to /login if no token is present
+export default function ProtectedRoute({ children }) {
+  const { token } = useApp();
+  if (!token) return <Navigate to="/login" replace />;
   return children;
 }
-
-export default ProtectedRoute;

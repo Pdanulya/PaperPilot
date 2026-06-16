@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #0E1E35;
+  --navy-mid: #162944;
+  --navy-light: #1E3A5F;
+  --accent: #3B82C4;
+  --accent-glow: #5BA3E8;
+  --accent-muted: rgba(59,130,196,0.12);
+  --gold: #C9993F;
+  --gold-light: #E8C47A;
+  --surface: #F7F9FC;
+  --surface-alt: #EEF3FA;
+  --border: rgba(14,30,53,0.09);
+  --border-strong: rgba(14,30,53,0.16);
+  --text: #0E1E35;
+  --text-muted: #4A6080;
+  --text-light: #7A92AA;
+  --white: #FFFFFF;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+  --shadow-sm: 0 1px 4px rgba(14,30,53,0.08);
+  --shadow: 0 4px 20px rgba(14,30,53,0.10);
+  --shadow-lg: 0 8px 40px rgba(14,30,53,0.14);
+}
+
+html { font-size: 16px; }
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.2s ease;
+}
+.toast-success { background: #0F6E56; color: #fff; }
+.toast-error   { background: #B91C1C; color: #fff; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Spinner */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
