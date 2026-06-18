@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 
@@ -10,63 +10,72 @@ import Upload from "./pages/Upload";
 import AllDocuments from "./pages/AllDocs";
 import SearchDocuments from "./pages/Search";
 import SavedItems from "./pages/SavedDocs";
+import DocumentWorkspace from "./pages/DocWorkSpace";
 
 function App() {
   return (
-    <Routes>
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <Dashboard />
-          </Layout>
-        }
-      />
+      <Routes>
+        <Route
+          path="/dashboard"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
 
-      <Route
-        path="/documents"
-        element={
-          <Layout>
-            <Documents />
-          </Layout>
-        }
-      />
+        <Route
+          path="/documents"
+          element={
+            <Layout>
+              <Documents />
+            </Layout>
+          }
+        />
 
-      <Route 
-        path="/upload" 
-        element={
-          <Layout>
-            <Upload/>
-          </Layout>
-        }/>
+        <Route 
+          path="/upload" 
+          element={
+            <Layout>
+              <Upload/>
+            </Layout>
+          }/>
 
-      <Route 
-        path="/alldocs" 
-        element={
-          <Layout>
-            <AllDocuments/>
-          </Layout>
-        }/>
+        <Route 
+          path="/alldocs" 
+          element={
+            <Layout>
+              <AllDocuments/>
+            </Layout>
+          }/>
 
-      <Route 
-        path="/search" 
-        element={
-          <Layout>
-            <SearchDocuments/>
-          </Layout>
-        }/>
+        <Route 
+          path="/search" 
+          element={
+            <Layout>
+              <SearchDocuments/>
+            </Layout>
+          }/>
 
-      <Route 
-        path="/saved" 
-        element={
-          <Layout>
-            <SavedItems/>
-          </Layout>
-        }/>
+        <Route 
+          path="/saved" 
+          element={
+            <Layout>
+              <SavedItems/>
+            </Layout>
+          }/>
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-    </Routes>
+        <Route 
+          path="/document/:id" 
+          element={
+            <Layout>
+              <DocumentWorkspace/>
+            </Layout>
+          }/>
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>    
   );
 }
 
