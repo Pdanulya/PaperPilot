@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
-import { UploadCloud, Files } from 'lucide-react';
+import { UploadCloud, TrainFront } from 'lucide-react';
 
 export default function Navbar() {
   const navTabs = [
@@ -16,10 +16,10 @@ export default function Navbar() {
     {/* Brand Header */}
       <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
         <div className="w-8 h-8 bg-[#E5BA73]/10 rounded-lg flex items-center justify-center text-[#E5BA73]">
-          <Files className="w-4 h-4" />
+          <TrainFront className="w-5 h-5" />
         </div>
         <span className="text-[#17048f] font-serif text-xl font-medium tracking-wide">
-          Docu<span className="text-[#E5BA73]">AI</span>
+          Paper<span className="text-[#E5BA73]">Pilot</span>
         </span>
       </div>
 

@@ -65,7 +65,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-[#0B1B33] text-white flex flex-col h-screen sticky top-0">
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto mt-8 p-4">
 
         {menuItems.map((section) => (
           <div key={section.label} className="mb-6">
