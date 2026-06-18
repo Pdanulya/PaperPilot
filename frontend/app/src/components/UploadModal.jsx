@@ -43,39 +43,39 @@ export default function UploadModal({ onClose, onSuccess }) {
   };
 
   return (
-    // Backdrop
+    /* Backdrop overlay */
     <div
-      className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-[var(--shadow-lg)] w-full max-w-md p-6"
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-[var(--font-display)] text-lg font-medium text-[var(--text)]" style={{ fontFamily: "var(--font-display)" }}>
+          <h2 className="text-lg font-medium text-[#0B1B33] font-serif">
             Upload Document
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--surface)] text-[var(--text-light)] border-0 bg-transparent cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 border-0 bg-transparent cursor-pointer transition-colors"
           >
-            <i className="ti ti-x" />
+            <i className="ti ti-x text-lg" />
           </button>
         </div>
 
-        {/* Drop zone */}
+        {/* Drop zone styled to match premium theme metrics */}
         <div
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => inputRef.current.click()}
           className={`
-            border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-150 mb-4
+            border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-150 mb-5
             ${dragging
-              ? "border-[var(--accent)] bg-[var(--accent-muted)]"
-              : "border-[var(--border-strong)] hover:border-[var(--accent)] hover:bg-[var(--surface)]"
+              ? "border-[#E5BA73] bg-[#E5BA73]/5"
+              : "border-slate-200 hover:border-[#0B1B33] hover:bg-slate-50/50"
             }
           `}
         >
@@ -86,33 +86,41 @@ export default function UploadModal({ onClose, onSuccess }) {
             className="hidden"
             onChange={(e) => e.target.files[0] && handleFile(e.target.files[0])}
           />
-          <i className="ti ti-cloud-upload text-4xl text-[var(--text-light)] mb-3 block" />
+          <i className={`ti ti-cloud-upload text-4xl mb-3 block transition-colors ${file ? 'text-[#E5BA73]' : 'text-slate-300'}`} />
+          
           {file ? (
             <div>
-              <p className="text-sm font-medium text-[var(--accent)]">{file.name}</p>
-              <p className="text-xs text-[var(--text-light)] mt-1">
+              <p className="text-sm font-semibold text-[#0B1B33] truncate max-w-xs mx-auto">{file.name}</p>
+              <p className="text-xs text-slate-400 mt-1 font-medium">
                 {(file.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
           ) : (
             <div>
-              <p className="text-sm text-[var(--text-muted)]">
-                Drag & drop or <span className="text-[var(--accent)] font-medium">browse</span>
+              <p className="text-sm text-slate-500">
+                Drag & drop or <span className="text-[#0B1B33] font-semibold underline decoration-[#E5BA73] decoration-2">browse</span>
               </p>
-              <p className="text-xs text-[var(--text-light)] mt-1">PDF, DOCX, TXT supported</p>
+              <p className="text-xs text-slate-400 mt-1.5">PDF, DOCX, TXT up to 25MB</p>
             </div>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        {/* Action Controls Cluster */}
+        <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
+          <Button 
+            variant="ghost" 
+            onClick={onClose}
+            className="text-slate-500 hover:text-slate-700 font-medium text-sm"
+          >
+            Cancel
+          </Button>
           <Button
             variant="primary"
             onClick={handleUpload}
             disabled={!file}
             loading={uploading}
             icon="ti-upload"
+            className="bg-[#0B1B33] hover:bg-[#162a4a] text-white rounded-xl font-medium px-4 text-sm disabled:opacity-50 disabled:pointer-events-none"
           >
             Upload
           </Button>

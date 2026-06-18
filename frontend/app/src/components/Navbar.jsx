@@ -1,88 +1,63 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useApp } from "../context/AppContext";
+import React from 'react';
+import { UploadCloud, Files } from 'lucide-react';
 
-const navLinks = [
-  { label: "Dashboard", path: "/dashboard" },
-  { label: "Documents", path: "/documents" },
-  { label: "Saved", path: "/saved" },
-];
-
-export default function Navbar() {
-  const { user, logout } = useApp();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  // Get user initials for avatar
-  const initials = user?.email?.slice(0, 2).toUpperCase() || "U";
+export default function Navbar({ currentPage, setCurrentPage }) {
+  const navTabs = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'documents', label: 'Documents' },
+    { id: 'search', label: 'Search' },
+    { id: 'saved', label: 'Saved' },
+  ];
 
   return (
-    <nav className="bg-white border-b border-[var(--border)] flex items-center justify-between px-10 h-[62px] sticky top-0 z-50">
-      {/* Brand */}
-      <a
-        href="/dashboard"
-        className="flex items-center gap-2.5 no-underline"
-        onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}
-      >
-        <div className="w-[34px] h-[34px] bg-[var(--navy)] rounded-lg flex items-center justify-center">
-          <i className="ti ti-files text-[var(--gold-light)] text-lg" />
+    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
+
+    {/* Brand Header */}
+      <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
+        <div className="w-8 h-8 bg-[#E5BA73]/10 rounded-lg flex items-center justify-center text-[#E5BA73]">
+          <Files className="w-4 h-4" />
         </div>
-        <span
-          className="font-[var(--font-display)] font-medium text-xl text-[var(--navy)] tracking-tight"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Docu<span className="text-[var(--accent)]">AI</span>
+        <span className="text-[#17048f] font-serif text-xl font-medium tracking-wide">
+          Docu<span className="text-[#E5BA73]">AI</span>
         </span>
-      </a>
-
-      {/* Nav links */}
-      <div className="flex items-center gap-1">
-        {navLinks.map((link) => {
-          const active = location.pathname === link.path;
-          return (
-            <button
-              key={link.path}
-              onClick={() => navigate(link.path)}
-              className={`
-                px-3.5 py-1.5 rounded-[10px] text-sm cursor-pointer transition-all duration-150 border-0 font-[var(--font-body)]
-                ${active
-                  ? "text-[var(--accent)] bg-[var(--accent-muted)] font-medium"
-                  : "text-[var(--text-muted)] bg-transparent hover:text-[var(--text)] hover:bg-[var(--surface)]"
-                }
-              `}
-            >
-              {link.label}
-            </button>
-          );
-        })}
       </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-2.5">
-        {/* Avatar with dropdown hint */}
-        <div className="relative group">
-          <div className="w-[34px] h-[34px] rounded-full bg-[var(--navy-light)] flex items-center justify-center text-xs font-medium text-[#B8D4F0] cursor-pointer select-none">
-            {initials}
-          </div>
-          {/* Logout on hover */}
-          <div className="absolute right-0 top-full mt-1 bg-white border border-[var(--border)] rounded-[10px] shadow-[var(--shadow)] p-1 min-w-[140px] hidden group-hover:block z-50">
-            <div className="px-3 py-1.5 text-xs text-[var(--text-light)] truncate border-b border-[var(--border)] mb-1">
-              {user?.email}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <i className="ti ti-logout mr-2" />
-              Sign out
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+  {/* Center - Navigation */}
+  <nav className="flex items-center gap-3">
+    {navTabs.map((tab) => {
+      const isActive = currentPage === tab.id;
+
+      return (
+        <button
+          key={tab.id}
+          onClick={() => setCurrentPage(tab.id)}
+          className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${
+            isActive
+              ? "bg-blue-50 text-blue-600"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+          }`}
+        >
+          {tab.label}
+        </button>
+      );
+    })}
+  </nav>
+
+  {/* Right - Actions */}
+  <div className="flex items-center gap-4 min-w-[180px] justify-end">
+    <button
+      onClick={() => setCurrentPage("upload")}
+      className="flex items-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+    >
+      <UploadCloud className="w-4 h-4 text-slate-500" />
+      <span>Upload</span>
+    </button>
+
+    <button className="w-9 h-9 bg-slate-900 text-white font-semibold text-sm rounded-full flex items-center justify-center">
+      JD
+    </button>
+  </div>
+
+</header>
   );
 }
