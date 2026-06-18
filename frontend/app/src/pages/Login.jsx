@@ -89,9 +89,33 @@
 //   );
 // }
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { Loader2 } from 'lucide-react';
 
 export default function Login() {
+  const { login, loading } = useApp();
+  const navigate = useNavigate();
+  
+  // Controlled React state form bindings
+  const [form, setForm] = useState({ email: '', password: '' });
+
+  // Handle controlled state text input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Submit and validate authentication credentials pipeline
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const ok = await login(form.email, form.password);
+    if (ok) {
+      navigate('/dashboard');
+    }
+  };
+  
   return (
     <div className="flex min-h-screen font-sans antialiased text-[#0f172a]">
       {/* Left Panel - Branding & Marketing */}
