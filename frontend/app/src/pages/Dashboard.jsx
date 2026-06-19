@@ -350,14 +350,6 @@ export default function Dashboard() {
               >
                 All documents
               </h2>
-              <Button
-                variant="primary"
-                icon="ti-plus"
-                onClick={() => setShowUpload(true)}
-                className="bg-[#0B1B33] hover:bg-[#162a4a] text-white"
-              >
-                Upload
-              </Button>
             </div>
 
             {loading ? (

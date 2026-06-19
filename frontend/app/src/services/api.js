@@ -11,49 +11,64 @@ const authHeaders = () => {
 };
 
 // Generic request handler — throws on non-2xx so callers can catch
+// const request = async (method, path, body = null, isFormData = false) => {
+//   const headers = isFormData
+//     ? { Authorization: `Bearer ${localStorage.getItem("token")}` }
+//     : authHeaders();
+
+//   const res = await fetch(`${BASE_URL}${path}`, {
+//     method,
+//     headers,
+//     body: isFormData ? body : body ? JSON.stringify(body) : null,
+//   });
+
+//   if (!res.ok) {
+//     const err = await res.json().catch(() => ({ detail: "Request failed" }));
+//     throw new Error(err.detail || "Something went wrong");
+//   }
+
+//   // Some endpoints return plain text (download)
+//   const contentType = res.headers.get("content-type") || "";
+//   if (contentType.includes("text/plain")) return res.text();
 const request = async (method, path, body = null, isFormData = false) => {
   const headers = isFormData
     ? { Authorization: `Bearer ${localStorage.getItem("token")}` }
     : authHeaders();
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const options = {
     method,
     headers,
-    body: isFormData ? body : body ? JSON.stringify(body) : null,
-  });
+  };
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Request failed" }));
-    throw new Error(err.detail || "Something went wrong");
+  if (isFormData) {
+    options.body = body;
+  } else if (body) {
+    options.body = JSON.stringify(body);
   }
 
-  // Some endpoints return plain text (download)
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("text/plain")) return res.text();
+const res = await fetch(`${BASE_URL}${path}`, options);
 
-  return res.json();
+const data = await res.json();
+
+if (!res.ok) {
+  console.log("Backend Error:", data);
+  throw new Error(data.detail || "Request failed");
+}
+
+return data;
 };
 
 // ─── Auth ────────────────────────────────────────────────────────
 export const authAPI = {
   register: (data) => request("POST", "/auth/register", data),
-  login: async (data) => {
-    // FastAPI OAuth2 expects form data not JSON
-    const form = new URLSearchParams();
-    form.append("username", data.email);
-    form.append("password", data.password);
+  login: (data) => request("POST", "/auth/login", data),
 
-    const res = await fetch(`${BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: form,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || "Login failed");
-    }
-    return res.json();
-  },
+    
+};
+
+//─── Fetch me ──────────────────────────────────────────────────
+export const userAPI = {
+  me: () => request("GET", "/user/me"),
 };
 
 // ─── Documents ──────────────────────────────────────────────────
