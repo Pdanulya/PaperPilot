@@ -1,134 +1,54 @@
-// import { useState } from "react";
-// import { useNavigate, Link } from "react-router-dom";
-// import { useApp } from "../context/AppContext";
-// import Button from "../components/Button";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { Loader2, Sparkles, MessageSquare, Highlighter, Search } from 'lucide-react';
 
-// export default function Register() {
-//   const { register, loading } = useApp();
-//   const navigate = useNavigate();
-//   const [form, setForm] = useState({ email: "", password: "", confirm: "" });
-//   const [error, setError] = useState("");
+export default function Register() {
+  const { register, loading } = useApp();
+  const navigate = useNavigate();
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setError("");
-//     if (form.password !== form.confirm) {
-//       setError("Passwords do not match");
-//       return;
-//     }
-//     if (form.password.length < 6) {
-//       setError("Password must be at least 6 characters");
-//       return;
-//     }
-//     const ok = await register(form.email, form.password);
-//     if (ok) navigate("/login");
-//   };
+  // Controlled state parameters matching layout input tags
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-//   return (
-//     <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-4">
-//       <div className="w-full max-w-sm">
-//         {/* Brand */}
-//         <div className="text-center mb-8">
-//           <div className="w-12 h-12 bg-[var(--navy)] rounded-xl flex items-center justify-center mx-auto mb-4">
-//             <i className="ti ti-files text-[var(--gold-light)] text-2xl" />
-//           </div>
-//           <h1
-//             className="text-2xl font-medium text-[var(--navy)] tracking-tight"
-//             style={{ fontFamily: "var(--font-display)" }}
-//           >
-//             Docu<span className="text-[var(--accent)]">AI</span>
-//           </h1>
-//           <p className="text-sm text-[var(--text-muted)] mt-1">
-//             Create your workspace
-//           </p>
-//         </div>
+  // Controlled tracking modifier for state parameters
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-//         <div className="bg-white border border-[var(--border)] rounded-2xl p-7 shadow-[var(--shadow)]">
-//           <form onSubmit={handleSubmit} className="space-y-4">
-//             <div>
-//               <label className="block text-sm font-medium text-[var(--text)] mb-1.5">
-//                 Email
-//               </label>
-//               <input
-//                 type="email"
-//                 required
-//                 value={form.email}
-//                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-//                 placeholder="you@example.com"
-//                 className="w-full px-3.5 py-2.5 rounded-[10px] border border-[var(--border-strong)] text-sm text-[var(--text)] bg-white placeholder:text-[var(--text-light)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-muted)] transition-all"
-//               />
-//             </div>
+  // Submit and validate new registration application profiles
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-//             <div>
-//               <label className="block text-sm font-medium text-[var(--text)] mb-1.5">
-//                 Password
-//               </label>
-//               <input
-//                 type="password"
-//                 required
-//                 value={form.password}
-//                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-//                 placeholder="Min. 6 characters"
-//                 className="w-full px-3.5 py-2.5 rounded-[10px] border border-[var(--border-strong)] text-sm text-[var(--text)] bg-white placeholder:text-[var(--text-light)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-muted)] transition-all"
-//               />
-//             </div>
+    // Form parameter validation criteria checks
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+    try{ 
+      await register(form.name, form.email, form.password);
+      
+      setSuccess('Registration successful! Please login.');
 
-//             <div>
-//               <label className="block text-sm font-medium text-[var(--text)] mb-1.5">
-//                 Confirm Password
-//               </label>
-//               <input
-//                 type="password"
-//                 required
-//                 value={form.confirm}
-//                 onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-//                 placeholder="••••••••"
-//                 className="w-full px-3.5 py-2.5 rounded-[10px] border border-[var(--border-strong)] text-sm text-[var(--text)] bg-white placeholder:text-[var(--text-light)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-muted)] transition-all"
-//               />
-//             </div>
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    }
+  };
 
-//             {error && (
-//               <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
-//                 {error}
-//               </p>
-//             )}
-
-//             <Button
-//               type="submit"
-//               variant="primary"
-//               loading={loading}
-//               className="w-full justify-center py-2.5 mt-2"
-//             >
-//               Create account
-//             </Button>
-//           </form>
-
-//           <p className="text-center text-sm text-[var(--text-muted)] mt-5">
-//             Already have an account?{" "}
-//             <Link
-//               to="/login"
-//               className="text-[var(--accent)] font-medium hover:underline"
-//             >
-//               Sign in
-//             </Link>
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-import React from 'react';
-
-export default function Login() {
   return (
     <div className="flex min-h-screen font-sans antialiased text-[#0f172a]">
       {/* Left Panel - Branding & Marketing */}
       <div className="hidden w-[35%] flex-col justify-between bg-[#0B1B33] p-12 text-white lg:flex">
-        {/* Header / Logo */}
         <div className="flex items-center gap-3">
-          
-          {/* <span className="text-xl font-semibold tracking-wide text-white">Docu<span className="text-[#E5BA73]">AI</span></span> */}
+          {/* Logo container wrapper placeholder */}
         </div>
 
         {/* Value Proposition */}
@@ -146,52 +66,61 @@ export default function Login() {
         {/* Feature Highlights */}
         <div className="space-y-4 text-xs font-medium text-slate-300">
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]">✦</span>
+            <span className="text-[#E5BA73]"><Sparkles className="w-4 h-4" /></span>
             <span>AI-powered summaries in seconds</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]">💬</span>
+            <span className="text-[#E5BA73]"><MessageSquare className="w-4 h-4" /></span>
             <span>Ask questions in plain language</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]">✎</span>
+            <span className="text-[#E5BA73]"><Highlighter className="w-4 h-4" /></span>
             <span>Smart highlight & annotation</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]">🔍</span>
+            <span className="text-[#E5BA73]"><Search className="w-4 h-4" /></span>
             <span>Cross-document semantic search</span>
           </div>
         </div>
       </div>
 
-      {/* Right Panel - Login Card */}
+      {/* Right Panel - Registration Form Card Card */}
       <div className="flex w-full items-center justify-center bg-[#F4F6F8] p-6 lg:w-[65%]">
         <div className="w-full max-w-[480px] rounded-2xl bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           
           {/* Header */}
           <div className="mb-8">
-            <h2 className="font-serif text-3xl font-medium text-[#0B1B33]">Welcome back</h2>
-            <p className="mt-1.5 text-sm text-slate-500">Sign in to your DocuAI workspace</p>
+            <h2 className="font-serif text-3xl font-medium text-[#0B1B33]">Create an Account</h2>
+            <p className="mt-1.5 text-sm text-slate-500">Register to your PaperPilot workspace</p>
           </div>
 
-          {/* Form */}
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          {/* Form Content Hub */}
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
                 Your Name
               </label>
               <input
                 type="text"
+                name="name"
+                required
+                value={form.name}
+                onChange={handleChange}
                 placeholder="John Doe"
                 className="w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3.5 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none transition-all duration-200"
               />
             </div>
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
                 Email Address
               </label>
               <input
                 type="email"
+                name="email"
+                required
+                value={form.email}
+                onChange={handleChange}
                 placeholder="you@company.com"
                 className="w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3.5 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none transition-all duration-200"
               />
@@ -203,20 +132,44 @@ export default function Login() {
               </label>
               <input
                 type="password"
-                defaultValue="••••••••"
+                name="password"
+                required
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Min. 6 characters"
                 className="w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3.5 text-sm placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none transition-all duration-200"
               />
             </div>
 
+            {success && (
+              <div className="text-sm text-green-600">
+                {success}
+              </div>
+            )}
+
+            {error && (
+              <div className="text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1B33] py-3.5 font-medium text-white transition-colors duration-200 hover:bg-[#162a4a]"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1B33] py-3.5 font-medium text-white transition-colors duration-200 hover:bg-[#162a4a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign up <span>→</span>
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <span>Sign up</span>
+                  <span>→</span>
+                </>
+              )}
             </button>
 
-            {/* Divider */}
+            {/* Divider Line layout elements */}
             <div className="relative my-6 flex items-center justify-center">
               <div className="w-full border-t border-slate-100"></div>
               <span className="absolute bg-white px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
@@ -224,12 +177,11 @@ export default function Login() {
               </span>
             </div>
 
-            {/* Google OAuth Button */}
+            {/* Google OAuth Button Block */}
             <button
               type="button"
               className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-slate-50"
             >
-              {/* Google Brand Icon */}
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -252,12 +204,12 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Footer Navigation */}
+          {/* Footer Routing Navigation Links */}
           <div className="mt-8 text-center text-sm text-slate-500">
             Already have an account?{' '}
-            <a href="/login" className="font-medium text-blue-600 hover:underline inline-flex items-center gap-1">
+            <Link to="/login" className="font-medium text-blue-600 hover:underline inline-flex items-center gap-1">
               Login <span className="text-xs">→</span>
-            </a>
+            </Link>
           </div>
 
         </div>

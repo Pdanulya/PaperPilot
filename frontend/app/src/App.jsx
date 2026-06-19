@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useApp } from "./context/AppContext";
 
 import Layout from "./components/Layout";
 
@@ -13,7 +14,10 @@ import SavedItems from "./pages/SavedDocs";
 import DocumentWorkspace from "./pages/DocWorkSpace";
 
 function App() {
+  const { toast } = useApp();
+
   return (
+    <>
       <Routes>
         <Route
           path="/dashboard"
@@ -75,7 +79,16 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-      </Routes>    
+      </Routes>   
+      
+      {toast && (
+        <div className={`fixed bottom-6 right-6 px-4 py-3 rounded-xl shadow-lg text-sm font-medium z-50 ${
+          toast.type === "error" ? "bg-red-500 text-white" : "bg-emerald-600 text-white"
+        }`}>
+          {toast.message}
+        </div>
+      )}
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authAPI } from "../services/api";
+import { authAPI, userAPI } from "../services/api";
 
 const AppContext = createContext();
 
@@ -21,28 +21,39 @@ export function AppProvider({ children }) {
     try {
       const data = await authAPI.login({ email, password });
       setToken(data.access_token);
-      // Decode basic user info from token payload (no sensitive data)
-      const payload = JSON.parse(atob(data.access_token.split(".")[1]));
-      setUser({ email, id: payload.sub });
-      showToast("Welcome back!", "success");
+      
+      setTimeout(async () => {
+        await fetchMe();
+      }, 0);
+
       return true;
     } catch (err) {
-      showToast(err.message, "error");
+      throw err;
       return false;
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (email, password) => {
+  const fetchMe = async () => {
+    try {
+      const data = await userAPI.me();
+      setUser(data);
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+    }
+  };
+  
+  const register = async (name, email, password) => {
     setLoading(true);
     try {
-      await authAPI.register({ email, password });
-      showToast("Account created! Please log in.", "success");
+      await authAPI.register({ name, email, password });
+      // showToast("Account created! Please log in.", "success");
       return true;
     } catch (err) {
-      showToast(err.message, "error");
-      return false;
+      // showToast(err.message, "error");
+      throw err;
+      // return false;
     } finally {
       setLoading(false);
     }
@@ -62,7 +73,17 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider
-      value={{ user, token, loading, toast, login, register, logout, showToast }}
+    value={{
+      user,
+      token,
+      loading,
+      toast,
+      login,
+      register,
+      logout,
+      showToast,
+      fetchMe
+    }}
     >
       {children}
     </AppContext.Provider>
