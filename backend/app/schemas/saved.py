@@ -11,6 +11,7 @@ class SavedDocumentResponse(BaseModel):
     # Nest basic document info so frontend doesn't need a second request
     document_title: Optional[str] = None
     document_file_type: Optional[str] = None
+    document_preview: Optional[str] = None
 
     class Config:
         from_attributes = True

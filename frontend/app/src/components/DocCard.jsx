@@ -66,8 +66,8 @@ export default function DocCard({ doc, onDelete, onSave, isSaved }) {
             transition-all
             ${
               isSaved
-                ? "bg-green-50 text-green-600 border-green-200"
-                : "bg-white text-gray-500 border-gray-200 hover:text-green-600 hover:border-green-300"
+                ? "bg-green-50 text-green-600 border-green-200 hover:bg-green-100"
+                : "bg-green-50 text-green-300 border-green-200 hover:bg-green-50 hover:text-green-500 hover:border-green-400"
             }
           `}
         >
@@ -83,8 +83,8 @@ export default function DocCard({ doc, onDelete, onSave, isSaved }) {
           onClick={() => onDelete(doc.id)}
           className="
             w-8 h-8 rounded-lg flex items-center justify-center border
-            bg-white text-gray-500 border-gray-200
-            hover:text-red-500 hover:border-red-300
+            bg-red-50 text-red-300 border-red-200
+            hover:text-red-500 hover:border-red-400
             transition-all
           "
         >

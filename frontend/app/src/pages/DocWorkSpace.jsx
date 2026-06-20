@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FileText, Send, Sparkles, Loader2, ArrowLeft, Bot, User } from 'lucide-react';
-// import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useParams, useNavigate } from 'react-router-dom';
 
