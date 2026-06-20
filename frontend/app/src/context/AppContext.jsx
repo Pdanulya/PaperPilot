@@ -9,6 +9,7 @@ export function AppProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null); // { message, type: 'success'|'error' }
+  const [showUpload, setShowUpload] = useState(false);
 
   // Keep localStorage in sync whenever token changes
   useEffect(() => {
@@ -21,10 +22,6 @@ export function AppProvider({ children }) {
     try {
       const data = await authAPI.login({ email, password });
       setToken(data.access_token);
-      
-      setTimeout(async () => {
-        await fetchMe();
-      }, 0);
 
       return true;
     } catch (err) {
@@ -43,6 +40,12 @@ export function AppProvider({ children }) {
       console.error("Failed to fetch user:", err);
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      fetchMe();
+    }
+  }, [token]);
   
   const register = async (name, email, password) => {
     setLoading(true);
@@ -71,6 +74,9 @@ export function AppProvider({ children }) {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const openUpload = () => setShowUpload(true);
+  const closeUpload = () => setShowUpload(false);
+
   return (
     <AppContext.Provider
     value={{
@@ -82,7 +88,10 @@ export function AppProvider({ children }) {
       register,
       logout,
       showToast,
-      fetchMe
+      fetchMe,
+      showUpload,
+      openUpload,
+      closeUpload
     }}
     >
       {children}

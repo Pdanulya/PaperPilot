@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 // import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DocCard from "../components/DocCard";
-import UploadModal from "../components/UploadModal";
+// import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { documentsAPI, libraryAPI } from "../services/api";
 import { useApp } from "../context/AppContext";
 
 export default function Documents() {
-  const { showToast } = useApp();
+  const { showToast, openUpload } = useApp();
   const [documents, setDocuments] = useState([]);
   const [savedIds, setSavedIds] = useState(new Set());
-  const [showUpload, setShowUpload] = useState(false);
+  // const [showUpload, setShowUpload] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -83,7 +83,7 @@ export default function Documents() {
               <Button 
                 variant="primary" 
                 icon="ti-plus" 
-                onClick={() => setShowUpload(true)}
+                onClick={openUpload}
                 className="bg-[#0B1B33] hover:bg-[#162a4a] text-white transition-all shadow-sm rounded-xl px-5 py-2.5 text-sm font-medium"
               >
                 Upload
@@ -143,10 +143,6 @@ export default function Documents() {
           </div>
         </main>
       </div>
-
-      {showUpload && (
-        <UploadModal onClose={() => setShowUpload(false)} onSuccess={fetchData} />
-      )}
     </div>
   );
 }

@@ -1,14 +1,17 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
-import { UploadCloud, TrainFront } from 'lucide-react';
+import { Upload, TrainFront } from 'lucide-react';
+import { useApp } from "../context/AppContext";
 
 export default function Navbar() {
   const navTabs = [
-  { path: "/dashboard", label: "Dashboard" },
-  { path: "/documents", label: "Documents" },
-  { path: "/search", label: "Search" },
-  { path: "/saved", label: "Saved" },
-];
+    { path: "/dashboard", label: "Dashboard" },
+    { path: "/documents", label: "Documents" },
+    { path: "/search", label: "Search" },
+    { path: "/saved", label: "Saved" },
+  ];
+
+  const { openUpload } = useApp();
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
@@ -44,13 +47,20 @@ export default function Navbar() {
 
   {/* Right - Actions */}
   <div className="flex items-center gap-4 min-w-[180px] justify-end">
-    <NavLink
+    {/* <NavLink
       to="/upload"
       className="flex items-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
     >
       <UploadCloud className="w-4 h-4 text-slate-500" />
       <span>Upload</span>
-    </NavLink>
+    </NavLink> */}
+    <button
+      onClick={openUpload}
+      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0B1B33] text-white hover:bg-[#162a4a] transition-colors shadow-sm"
+    >
+      <Upload className="w-4 h-4" />
+      Upload
+    </button>
 
     <button className="w-9 h-9 bg-slate-900 text-white font-semibold text-sm rounded-full flex items-center justify-center">
       JD
