@@ -1,27 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Send, Sparkles, Loader2, ArrowLeft, Bot, User } from 'lucide-react';
 import Sidebar from "../components/Sidebar";
 import { useParams, useNavigate } from 'react-router-dom';
+import { documentsAPI } from "../services/api";
 
 export default function DocumentWorkspace({ docId, onBack }) {
   const { id } = useParams(); // Accessible dynamic ID from URL parameters
   const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
 
-  // Simulated active document state
-  const [document] = useState({
-    id: docId || 1,
-    title: 'Financial_Statement_Q2.pdf',
-    size: '4.2 MB',
-    uploadedAt: 'Jun 14, 2026'
-  });
+  const [document, setDocument] = useState(null); // Load the document
+  const [loading, setLoading] = useState(true);
 
-  const [messages, setMessages] = useState([
-    { role: 'assistant', text: `Hello! I've fully indexed ${document.title}. Ask me any specific operational questions or click the generator button to compute an automated summary matrix.` }
-  ]);
+  const [messages, setMessages] = useState({});
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
+
+  useEffect(() => {
+    loadDocument();
+  }, [id]);
+
+  const loadDocument = async () => {
+    try {
+      const data = await documentsAPI.getOne(id);
+      console.log(data);
+      setDocument(data);
+
+      setMessages([
+        {
+          role: "assistant",
+          text: `Hello! I've fully indexed ${data.title}. Ask me anything about this document.`
+        }
+      ]);
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!document) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Document not found.
+      </div>
+    );
+  }
 
   // Trigger Summary Pipeline
   const handleGenerateSummary = async () => {
@@ -29,7 +64,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
     try {
       // Simulated API round-trip delay
       await new Promise(resolve => setTimeout(resolve, 1500));
-      setSummary("This asset covers fiscal Q2 benchmarks. Highlights indicate total top-line revenue expansions by 14.2% quarter-over-quarter, primary operational outlays shifting toward infrastructure modernization pipelines, and key risk exposures contained safely within traditional corporate targets.");
+      // setSummary("This asset covers fiscal Q2 benchmarks. Highlights indicate total top-line revenue expansions by 14.2% quarter-over-quarter, primary operational outlays shifting toward infrastructure modernization pipelines, and key risk exposures contained safely within traditional corporate targets.");
     } catch (err) {
       console.error(err);
     } finally {
@@ -75,20 +110,42 @@ export default function DocumentWorkspace({ docId, onBack }) {
               >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <div>
+            {/* <div>
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-[#E5BA73]" />
                 <h1 className="text-xl font-medium text-[#0B1B33] font-serif tracking-wide">{document.title}</h1>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">Size: {document.size} • Uploaded {document.uploadedAt}</p>
+            </div> */}
+            <div>
+              <div className="flex items-center gap-3">
+
+                  <FileText className="text-[#E5BA73]" />
+
+                  <div>
+
+                      <h1 className="text-2xl font-serif">
+
+                          {document.title}
+
+                      </h1>
+
+                      <p className="text-sm text-slate-500">
+
+                          {document.file_type.toUpperCase()} • Uploaded {new Date(document.uploaded_at).toLocaleDateString()}
+
+                      </p>
+
+                  </div>
+
+              </div>
             </div>
           </div>
 
           {/* Interactive Core Panel Layout Splits */}
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
-            
-            {/* Left Column: Summary Generation Widget Box Module */}
-            <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
+          <div className="flex-1 flex flex-col gap-6 min-h-0">
+
+            {/* <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                 <h3 className="text-sm font-semibold text-[#0B1B33] tracking-wide">Document Digest Matrix</h3>
                 <button
@@ -117,11 +174,73 @@ export default function DocumentWorkspace({ docId, onBack }) {
                   </div>
                 )}
               </div>
+            </div> */}
+            {/* ================= DOCUMENT VIEWER ================= */}
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+
+                  <h2 className="text-lg font-semibold text-[#0B1B33] mb-4">
+                      Document
+                  </h2>
+
+                  <div
+                      className={`${
+                          expanded ? "" : "max-h-[450px]"
+                      } overflow-hidden`}
+                  >
+
+                      <pre className="whitespace-pre-wrap leading-7 text-sm text-slate-700 font-sans">
+                         {document.raw_text || "No text extracted from this document."}
+                      </pre>
+
+                  </div>
+
+                  <div className="flex justify-center mt-5">
+
+                      <button
+                          onClick={() => setExpanded(!expanded)}
+                          className="text-[#0B1B33] font-medium hover:underline"
+                      >
+                          {expanded ? "Show Less" : "Read More"}
+                      </button>
+
+                  </div>
+
+              </div>
+                         
+              {/* Left Column: Summary Generation Widget Box Module */}
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-5">
+                    <h2 className="text-lg font-semibold text-[#0B1B33]">
+                        Summary
+                    </h2>
+
+                    <button
+                        onClick={handleGenerateSummary}
+                        disabled={generatingSummary}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1B33] text-white hover:bg-[#162a4a]"
+                    >
+                        {generatingSummary
+                            ? <Loader2 className="w-4 h-4 animate-spin"/>
+                            : <Sparkles className="w-4 h-4 text-[#E5BA73]"/>
+                        }
+                        Generate Summary
+                    </button>
+                </div>
+                {summary ? (
+                    <div className="text-slate-700 leading-7">
+                        {summary}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 text-slate-400">
+                        Click "Generate Summary" to create an AI summary.
+                    </div>
+                )}
             </div>
 
             {/* Right Column: Complete Interactive Chat Stream Panel Component */}
-            <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl flex flex-col min-h-0 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-              
+            <div className="bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[550px] shadow-sm">
               {/* Context Chat Feed Stream Wrapper */}
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {messages.map((msg, idx) => {
