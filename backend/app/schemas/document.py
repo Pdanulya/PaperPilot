@@ -9,5 +9,6 @@ class DocumentResponse(BaseModel):
     file_path: str
     uploaded_at: datetime
     # user_id: int
+    raw_text: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
