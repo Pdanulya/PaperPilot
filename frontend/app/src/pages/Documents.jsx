@@ -34,10 +34,21 @@ export default function Documents() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this document?")) return;
+
     try {
       await documentsAPI.delete(id);
+
+      // ✅ remove from UI instantly (optimistic update)
+      setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+
+      // also update saved IDs if needed
+      setSavedIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+
       showToast("Document deleted", "success");
-      fetchData();
     } catch (err) {
       showToast(err.message, "error");
     }
@@ -45,10 +56,24 @@ export default function Documents() {
 
   const handleSave = async (id, isSaved) => {
     try {
-      if (isSaved) await libraryAPI.unsave(id);
-      else await libraryAPI.save(id);
-      showToast(isSaved ? "Removed from saved" : "Saved!", "success");
-      fetchData();
+      if (isSaved) {
+        await libraryAPI.unsave(id);
+
+        // update local state instantly
+        setSavedIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(id);
+          return newSet;
+        });
+
+        showToast("Removed from saved", "success");
+      } else {
+        await libraryAPI.save(id);
+
+        setSavedIds((prev) => new Set(prev).add(id));
+
+        showToast("Saved!", "success");
+      }
     } catch (err) {
       showToast(err.message, "error");
     }

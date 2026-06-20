@@ -1,59 +1,94 @@
 import { useNavigate } from "react-router-dom";
+import {
+  Trash2,
+  Bookmark,
+  BookmarkCheck,
+  FileText,
+  File,
+  FileType2,
+} from "lucide-react";
 
-// Maps file extension to icon + color classes
 const typeConfig = {
-  ".pdf":  { icon: "ti-file-type-pdf", bg: "bg-[#FEF0EB]", color: "text-[#D85A30]" },
-  ".docx": { icon: "ti-file-type-doc", bg: "bg-[#E6F1FB]", color: "text-[#185FA5]" },
-  ".txt":  { icon: "ti-file-text",     bg: "bg-[#EAF3DE]", color: "text-[#3B6D11]" },
+  ".pdf": { icon: FileText, bg: "bg-red-50", color: "text-red-500" },
+  ".docx": { icon: FileType2, bg: "bg-blue-50", color: "text-blue-600" },
+  ".txt": { icon: File, bg: "bg-green-50", color: "text-green-600" },
 };
 
 export default function DocCard({ doc, onDelete, onSave, isSaved }) {
   const navigate = useNavigate();
-  const cfg = typeConfig[doc.file_type] || typeConfig[".txt"];
 
-  // Format date like "Jun 3, 2026"
-  const date = new Date(doc.created_at).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
+  const cfg = typeConfig[doc.file_type] || typeConfig[".txt"];
+  const Icon = cfg.icon;
+
+  const date = new Date(
+    doc.uploaded_at || doc.created_at
+  ).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 
   return (
     <div
       onClick={() => navigate(`/document/${doc.id}`)}
-      className="bg-white border border-[var(--border)] rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:border-[var(--accent)] hover:shadow-[var(--shadow)] hover:-translate-y-px relative group"
+      className="
+        bg-white border border-gray-200 rounded-2xl p-5 cursor-pointer
+        transition-all duration-200
+        hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5
+        relative
+      "
     >
-      {/* File type icon */}
-      <div className={`w-[42px] h-[42px] rounded-[10px] flex items-center justify-center mb-3.5 ${cfg.bg} ${cfg.color} text-xl`}>
-        <i className={`ti ${cfg.icon}`} />
+      {/* ICON */}
+      <div
+        className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3.5 ${cfg.bg}`}
+      >
+        <Icon className={`w-5 h-5 ${cfg.color}`} />
       </div>
 
-      {/* Title */}
-      <p className="text-sm font-medium text-[var(--text)] mb-1 truncate pr-6">
+      {/* TITLE */}
+      <p className="text-sm font-semibold text-gray-800 mb-1 truncate pr-6">
         {doc.title}
       </p>
-      <p className="text-[11px] text-[var(--text-light)]">{date}</p>
 
-      {/* Action buttons — shown on hover */}
+      {/* DATE */}
+      <p className="text-xs text-gray-400">{date}</p>
+
+      {/* ACTION BUTTONS (ALWAYS VISIBLE) */}
       <div
-        className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={(e) => e.stopPropagation()} // prevent card navigation
+        className="absolute top-3 right-3 flex gap-2"
+        onClick={(e) => e.stopPropagation()}
       >
+        {/* SAVE / UNSAVE */}
         <button
           onClick={() => onSave(doc.id, isSaved)}
-          title={isSaved ? "Unsave" : "Save"}
-          className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm transition-colors border-0
-            ${isSaved
-              ? "bg-[var(--accent-muted)] text-[var(--accent)]"
-              : "bg-[var(--surface)] text-[var(--text-light)] hover:text-[var(--accent)]"
-            }`}
+          className={`
+            w-8 h-8 rounded-lg flex items-center justify-center border
+            transition-all
+            ${
+              isSaved
+                ? "bg-green-50 text-green-600 border-green-200"
+                : "bg-white text-gray-500 border-gray-200 hover:text-green-600 hover:border-green-300"
+            }
+          `}
         >
-          <i className={`ti ${isSaved ? "ti-bookmark-filled" : "ti-bookmark"}`} />
+          {isSaved ? (
+            <BookmarkCheck className="w-4 h-4" />
+          ) : (
+            <Bookmark className="w-4 h-4" />
+          )}
         </button>
+
+        {/* DELETE */}
         <button
           onClick={() => onDelete(doc.id)}
-          title="Delete"
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-sm bg-[var(--surface)] text-[var(--text-light)] hover:text-red-500 hover:bg-red-50 transition-colors border-0"
+          className="
+            w-8 h-8 rounded-lg flex items-center justify-center border
+            bg-white text-gray-500 border-gray-200
+            hover:text-red-500 hover:border-red-300
+            transition-all
+          "
         >
-          <i className="ti ti-trash" />
+          <Trash2 className="w-4 h-4" />
         </button>
       </div>
     </div>
