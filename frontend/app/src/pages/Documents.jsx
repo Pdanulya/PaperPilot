@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 // import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DocCard from "../components/DocCard";
-import UploadModal from "../components/UploadModal";
+// import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { documentsAPI, libraryAPI } from "../services/api";
 import { useApp } from "../context/AppContext";
 
 export default function Documents() {
-  const { showToast } = useApp();
+  const { showToast, openUpload } = useApp();
   const [documents, setDocuments] = useState([]);
   const [savedIds, setSavedIds] = useState(new Set());
-  const [showUpload, setShowUpload] = useState(false);
+  // const [showUpload, setShowUpload] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -34,10 +34,21 @@ export default function Documents() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this document?")) return;
+
     try {
       await documentsAPI.delete(id);
+
+      // ✅ remove from UI instantly (optimistic update)
+      setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+
+      // also update saved IDs if needed
+      setSavedIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+
       showToast("Document deleted", "success");
-      fetchData();
     } catch (err) {
       showToast(err.message, "error");
     }
@@ -45,10 +56,24 @@ export default function Documents() {
 
   const handleSave = async (id, isSaved) => {
     try {
-      if (isSaved) await libraryAPI.unsave(id);
-      else await libraryAPI.save(id);
-      showToast(isSaved ? "Removed from saved" : "Saved!", "success");
-      fetchData();
+      if (isSaved) {
+        await libraryAPI.unsave(id);
+
+        // update local state instantly
+        setSavedIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(id);
+          return newSet;
+        });
+
+        showToast("Removed from saved", "success");
+      } else {
+        await libraryAPI.save(id);
+
+        setSavedIds((prev) => new Set(prev).add(id));
+
+        showToast("Saved!", "success");
+      }
     } catch (err) {
       showToast(err.message, "error");
     }
@@ -83,7 +108,7 @@ export default function Documents() {
               <Button 
                 variant="primary" 
                 icon="ti-plus" 
-                onClick={() => setShowUpload(true)}
+                onClick={openUpload}
                 className="bg-[#0B1B33] hover:bg-[#162a4a] text-white transition-all shadow-sm rounded-xl px-5 py-2.5 text-sm font-medium"
               >
                 Upload
@@ -143,10 +168,6 @@ export default function Documents() {
           </div>
         </main>
       </div>
-
-      {showUpload && (
-        <UploadModal onClose={() => setShowUpload(false)} onSuccess={fetchData} />
-      )}
     </div>
   );
 }

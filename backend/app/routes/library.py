@@ -86,6 +86,11 @@ def get_saved_documents(
     for record in saved_records:
         record.document_title = record.document.title
         record.document_file_type = record.document.file_type
+        record.document_preview = (
+            record.document.raw_text[:180] + "..."
+            if record.document.raw_text and len(record.document.raw_text) > 180
+            else record.document.raw_text
+        )
         results.append(record)
 
     return results
