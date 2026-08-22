@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useParams, useNavigate } from 'react-router-dom';
 import { documentsAPI, chatAPI } from "../services/api";
 import { useApp } from "../context/AppContext";
+import Markdown from "../components/Markdown";
 
 export default function DocumentWorkspace({ docId, onBack }) {
   const { id } = useParams(); // Accessible dynamic ID from URL parameters
@@ -267,9 +268,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
                     </button>
                 </div>
                 {summary ? (
-                    <div className="text-slate-700 leading-7">
-                        {summary}
-                    </div>
+                    <Markdown content={summary} />
                 ) : (
                     <div className="text-center py-12 text-slate-400">
                         Click "Generate Summary" to create an AI summary.
