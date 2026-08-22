@@ -61,12 +61,13 @@ export default function DocumentWorkspace({ docId, onBack }) {
   // Trigger Summary Pipeline
   const handleGenerateSummary = async () => {
     setGeneratingSummary(true);
+
     try {
-      // Simulated API round-trip delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // setSummary("This asset covers fiscal Q2 benchmarks. Highlights indicate total top-line revenue expansions by 14.2% quarter-over-quarter, primary operational outlays shifting toward infrastructure modernization pipelines, and key risk exposures contained safely within traditional corporate targets.");
+      const data = await documentsAPI.summary(id);
+
+      setSummary(data.summary);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to generate summary:", err);
     } finally {
       setGeneratingSummary(false);
     }
