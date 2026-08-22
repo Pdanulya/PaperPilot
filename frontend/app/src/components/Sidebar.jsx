@@ -42,7 +42,7 @@ export default function Sidebar() {
           icon: Files,
         },
         {
-          path: "/multi-doc-analysis",
+          path: "/multi-document-analysis",
           title: "Multi Document Analysis",
           icon: FileDiff,
         },
