@@ -1,19 +1,34 @@
 import React from 'react';
 import { FileText, Filter, UploadCloud } from 'lucide-react';
-// import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { documentsAPI } from "../services/api";
 
 export default function AllDocuments({ setCurrentPage }) {
-  const documents = [
-    { title: 'Annual Report 2024.pdf', size: '2.4 MB', pages: '84 pages', type: 'pdf', tag: 'New' },
-    { title: 'Contract_NDA_2025.docx', size: '480 KB', pages: '12 pages', type: 'docx', tag: 'Saved' },
-    { title: 'Research Paper — AI.pdf', size: '1.1 MB', pages: '28 pages', type: 'pdf' },
-    { title: 'Q3 Financial Analysis.docx', size: '320 KB', pages: '9 pages', type: 'docx' },
-    { title: 'Product Roadmap 2025.docx', size: '210 KB', pages: '6 pages', type: 'docx' },
-    { title: 'Legal Brief — Case 204.pdf', size: '900 KB', pages: '33 pages', type: 'pdf' },
-    { title: 'Meeting Notes — April.txt', size: '18 KB', pages: '3 pages', type: 'txt' },
-    { title: 'Investor Deck Q2.pdf', size: '4.2 MB', pages: '22 pages', type: 'pdf' },
-  ];
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    try {
+      setLoading(true);
+
+      const data = await documentsAPI.getAll();
+
+      console.log("Documents:", data);
+
+      setDocuments(data);
+
+    } catch (err) {
+      console.error("Failed to load documents:", err);
+      setError("Failed to load documents.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F4F6F8]">
