@@ -31,7 +31,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
       setMessages([
         {
           role: "assistant",
-          text: `Hello! I've fully indexed ${data.title}. Ask me anything about this document.`
+          text: `Hello! I'm fully informed about ${data.title}. Ask me anything about this document.`
         }
       ]);
 
@@ -76,21 +76,43 @@ export default function DocumentWorkspace({ docId, onBack }) {
   // Trigger Chat Message Pipeline
   const handleSendMessage = async (e) => {
     e.preventDefault();
+
     if (!inputValue.trim()) return;
 
-    const userMessage = { role: 'user', text: inputValue };
+    const userMessage = {
+      role: "user",
+      text: inputValue
+    };
+
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+
+    setInputValue("");
     setSendingMessage(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        text: `This is a simulated workspace reply analyzing your specific inquiry regarding: "${userMessage.text}". Everything checks out cleanly within compliance metrics.`
-      }]);
+      const data = await documentsAPI.chat(id, userMessage.text);
+
+      console.log("Chat response:", data);
+
+      setMessages(prev => [
+        ...prev,
+        {
+          role: "assistant",
+          text: data.answer
+        }
+      ]);
+
     } catch (err) {
-      console.error(err);
+      console.error("Failed to send message:", err);
+
+      setMessages(prev => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Sorry, I couldn't process your question. Please try again."
+        }
+      ]);
+
     } finally {
       setSendingMessage(false);
     }
