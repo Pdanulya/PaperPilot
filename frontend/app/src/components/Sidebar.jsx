@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -8,10 +8,12 @@ import {
   Bookmark,
   Clock,
 } from "lucide-react";
+import { libraryAPI } from "../services/api";
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [recents, setRecents] = useState([]);
 
   const menuItems = [
     {
@@ -51,16 +53,21 @@ export default function Sidebar() {
     },
   ];
 
-  const recents = [
-    {
-      id: 1,
-      title: "Annual Report 2024",
-    },
-    {
-      id: 2,
-      title: "Contract_NDA.pdf",
-    },
-  ];
+  useEffect(() => {
+    loadRecentDocuments();
+  }, []);
+
+  const loadRecentDocuments = async () => {
+    try {
+      const data = await libraryAPI.getRecent();
+
+      console.log("Recent documents:", JSON.stringify(data, null, 2));
+
+      setRecents(data);
+    } catch (err) {
+      console.error("Failed to load recent documents:", err);
+    }
+  };
 
   return (
     <aside className="w-64 bg-[#0B1B33] text-white flex flex-col h-screen sticky top-0">
@@ -111,11 +118,12 @@ export default function Sidebar() {
           <div className="space-y-1">
             {recents.map((doc) => (
               <button
-                key={doc.id}
+                key={doc.document_id}
+                onClick={() => navigate(`/document/${doc.document_id}`)}
                 className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-slate-400 hover:bg-slate-800 hover:text-white"
               >
                 <Clock className="w-4 h-4" />
-                <span className="truncate">{doc.title}</span>
+                <span className="truncate">{doc.document_title}</span>
               </button>
             ))}
           </div>
