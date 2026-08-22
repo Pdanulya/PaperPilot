@@ -12,6 +12,7 @@ import AllDocuments from "./pages/AllDocs";
 import SearchDocuments from "./pages/Search";
 import SavedItems from "./pages/SavedDocs";
 import DocumentWorkspace from "./pages/DocWorkSpace";
+import MultiDocumentAnalysis from "./pages/MultiDocumentAnalysis";
 
 function App() {
   const { toast } = useApp();
@@ -76,6 +77,15 @@ function App() {
               <DocumentWorkspace/>
             </Layout>
           }/>
+
+        <Route
+          path="/multi-document-analysis"
+          element={
+            <Layout>
+              <MultiDocumentAnalysis/>
+            </Layout>
+          }
+        />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
