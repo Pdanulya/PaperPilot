@@ -35,11 +35,6 @@ export default function Sidebar() {
           icon: Files,
         },
         {
-          path: "/search",
-          title: "Search",
-          icon: Search,
-        },
-        {
           path: "/saved",
           title: "Saved Items",
           icon: Bookmark,
@@ -135,15 +130,6 @@ export default function Sidebar() {
 
         </div>
 
-      </div>
-
-      <div className="p-4 border-t border-slate-800">
-        <button
-          onClick={() => navigate("/upload")}
-          className="w-full bg-[#f6f5f3] hover:bg-[#E5BA73] text-[#0B1B33] font-semibold py-3 rounded-xl transition"
-        >
-          + New Upload
-        </button>
       </div>
 
     </aside>
