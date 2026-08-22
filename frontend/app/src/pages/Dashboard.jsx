@@ -91,7 +91,7 @@ export default function Dashboard() {
               Your <span className="italic text-[#E5BA73]">document intelligence</span> workspace
             </h1>
             <p className="text-sm text-slate-400 mb-6 relative">
-              Upload, analyse, chat — everything in one place.
+              Upload, analyse, chat - everything in one place.
             </p>
 
             {/* Stats row */}
