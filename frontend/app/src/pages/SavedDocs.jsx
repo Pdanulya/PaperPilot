@@ -60,7 +60,7 @@ export default function SavedItems() {
                   Saved Documents
                 </h1>
                 <p className="text-sm text-slate-500 mt-0.5">
-                  Review saved ..................
+                  Review saved items
                 </p>
               </div>
             </div>
