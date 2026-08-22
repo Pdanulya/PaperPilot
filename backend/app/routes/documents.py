@@ -27,6 +27,7 @@ from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.summary import SummaryResponse
+from app.schemas.document_compare import CompareRequest, CompareResponse
 
 from app.services.chunking_service import chunk_text
 from app.services.embedding_service import get_embedding
@@ -300,6 +301,52 @@ def search_document(
             for chunk in relevant_chunks
         ]
     )
+
+
+@router.post(
+    "/compare",
+    response_model=CompareResponse
+)
+def compare_documents(
+    request: CompareRequest,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    # Get all selected documents that belong to the current user
+    documents = (
+        db.query(Document)
+        .filter(
+            Document.id.in_(request.document_ids),
+            Document.user_id == current_user.id
+        )
+        .all()
+    )
+
+    # Make sure all requested documents were found
+    if len(documents) != len(set(request.document_ids)):
+        raise HTTPException(
+            status_code=404,
+            detail="One or more documents were not found"
+        )
+
+    # Build combined context with document names
+    context_parts = []
+
+    for document in documents:
+        context_parts.append(
+            f"\n\n===== DOCUMENT: {document.title} =====\n\n"
+            f"{document.raw_text or 'No text extracted from this document.'}"
+        )
+
+    context = "\n".join(context_parts)
+
+    # Generate AI answer using all documents
+    answer = generate_answer(
+        request.query,
+        context
+    )
+
+    return CompareResponse(answer=answer)
 
 @router.post(
     "/{document_id}/chat",

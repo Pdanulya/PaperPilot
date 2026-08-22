@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Send, Sparkles, Loader2, ArrowLeft, Bot, User } from 'lucide-react';
 import Sidebar from "../components/Sidebar";
 import { useParams, useNavigate } from 'react-router-dom';
-import { documentsAPI } from "../services/api";
+import { documentsAPI, chatAPI } from "../services/api";
+import { useApp } from "../context/AppContext";
+import Markdown from "../components/Markdown";
 
 export default function DocumentWorkspace({ docId, onBack }) {
   const { id } = useParams(); // Accessible dynamic ID from URL parameters
@@ -11,7 +13,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
 
   const [document, setDocument] = useState(null); // Load the document
   const [loading, setLoading] = useState(true);
-
+  const { showToast } = useApp();
   const [messages, setMessages] = useState({});
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
@@ -118,6 +120,26 @@ export default function DocumentWorkspace({ docId, onBack }) {
     }
   };
 
+  const handleDownloadHistory = async () => {
+  try {
+    const blob = await chatAPI.downloadHistory(id);
+
+    const url = window.URL.createObjectURL(blob);
+    const link = window.document.createElement("a");
+
+    link.href = url;
+    link.download = `${document.title.replace(/\.[^/.]+$/, "")}_chat_history.txt`;
+
+    window.document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Failed to download chat history:", err);
+  }
+};
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F4F6F8]">
       {/* <Navbar /> */}
@@ -133,13 +155,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
               >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            {/* <div>
-              <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-[#E5BA73]" />
-                <h1 className="text-xl font-medium text-[#0B1B33] font-serif tracking-wide">{document.title}</h1>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">Size: {document.size} • Uploaded {document.uploadedAt}</p>
-            </div> */}
+        
             <div>
               <div className="flex items-center gap-3">
 
@@ -242,7 +258,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
                     <button
                         onClick={handleGenerateSummary}
                         disabled={generatingSummary}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1B33] text-white hover:bg-[#162a4a]"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1B33] text-white hover:bg-[#293953]"
                     >
                         {generatingSummary
                             ? <Loader2 className="w-4 h-4 animate-spin"/>
@@ -252,9 +268,7 @@ export default function DocumentWorkspace({ docId, onBack }) {
                     </button>
                 </div>
                 {summary ? (
-                    <div className="text-slate-700 leading-7">
-                        {summary}
-                    </div>
+                    <Markdown content={summary} />
                 ) : (
                     <div className="text-center py-12 text-slate-400">
                         Click "Generate Summary" to create an AI summary.
@@ -264,6 +278,20 @@ export default function DocumentWorkspace({ docId, onBack }) {
 
             {/* Right Column: Complete Interactive Chat Stream Panel Component */}
             <div className="bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[550px] shadow-sm">
+
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+                <h2 className="text-lg font-semibold text-[#0B1B33]">
+                  Document Chat 
+                </h2>
+
+                <button
+                  onClick={handleDownloadHistory}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1B33] text-white hover:bg-[#293953]"
+                >
+                  Download Chat History
+                </button>
+              </div>
+
               {/* Context Chat Feed Stream Wrapper */}
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {messages.map((msg, idx) => {

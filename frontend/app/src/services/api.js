@@ -84,6 +84,7 @@ export const documentsAPI = {
   chat: (id, query) => request("POST", `/documents/${id}/chat`, { query }),
   search: (id, query) => request("POST", `/documents/${id}/search`, { query }),
   summary: (id) => request("POST", `/documents/${id}/summary`),
+  compare: (documentIds, query) => request("POST", "/documents/compare", { document_ids: documentIds, query: query }),
 };
 
 // ─── Chat History ───────────────────────────────────────────────
