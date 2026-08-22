@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  UploadCloud,
   Files,
-  Search,
   Bookmark,
   Clock,
+  Workflow,
+  FileDiff,
 } from "lucide-react";
 import { libraryAPI } from "../services/api";
 
@@ -17,7 +17,6 @@ export default function Sidebar() {
 
   const menuItems = [
     {
-      label: "WORKSPACE",
       links: [
         {
           path: "/dashboard",
@@ -27,12 +26,25 @@ export default function Sidebar() {
       ],
     },
     {
-      label: "LIBRARY",
+      links: [
+        {
+          path: "/workspace",
+          title: "Workspace",
+          icon: Workflow,
+        },
+      ],
+    },
+    {
       links: [
         {
           path: "/documents",
           title: "All Documents",
           icon: Files,
+        },
+        {
+          path: "/multi-doc-analysis",
+          title: "Multi Document Analysis",
+          icon: FileDiff,
         },
         {
           path: "/saved",
