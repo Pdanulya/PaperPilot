@@ -24,11 +24,6 @@ export default function Sidebar() {
           title: "Dashboard",
           icon: LayoutDashboard,
         },
-        {
-          path: "/upload",
-          title: "Upload Document",
-          icon: UploadCloud,
-        },
       ],
     },
     {
@@ -73,6 +68,16 @@ export default function Sidebar() {
     <aside className="w-64 bg-[#0B1B33] text-white flex flex-col h-screen sticky top-0">
 
       <div className="flex-1 overflow-y-auto mt-8 p-4">
+
+      {/* New Upload */}
+        <div className="px-4 mb-10">
+          <button
+            onClick={() => navigate("/upload")}
+            className="w-full bg-[#f6f5f3] hover:bg-[#E5BA73] text-[#0B1B33] font-semibold py-3 rounded-xl transition"
+          >
+            + New Upload
+          </button>
+        </div>
 
         {menuItems.map((section) => (
           <div key={section.label} className="mb-6">
@@ -122,7 +127,7 @@ export default function Sidebar() {
                 onClick={() => navigate(`/document/${doc.document_id}`)}
                 className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-slate-400 hover:bg-slate-800 hover:text-white"
               >
-                <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4 flex-shrink-0" />
                 <span className="truncate">{doc.document_title}</span>
               </button>
             ))}
