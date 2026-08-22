@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-// import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DocCard from "../components/DocCard";
-// import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { documentsAPI, libraryAPI } from "../services/api";
 import { useApp } from "../context/AppContext";
+import { Search } from "lucide-react";
 
 export default function Documents() {
   const { showToast, openUpload } = useApp();
@@ -105,19 +104,12 @@ export default function Documents() {
                   {documents.length} document{documents.length !== 1 ? "s" : ""} in your workspace
                 </p>
               </div>
-              <Button 
-                variant="primary" 
-                icon="ti-plus" 
-                onClick={openUpload}
-                className="bg-[#0B1B33] hover:bg-[#162a4a] text-white transition-all shadow-sm rounded-xl px-5 py-2.5 text-sm font-medium"
-              >
-                Upload
-              </Button>
+              
             </div>
 
             {/* Styled Dynamic Search Bar */}
             <div className="relative max-w-sm">
-              <i className="ti ti-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
               <input
                 type="text"
                 placeholder="Search documents…"
