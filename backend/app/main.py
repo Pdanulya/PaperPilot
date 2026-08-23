@@ -4,6 +4,7 @@ from app.routes.user import router as user_router
 from app.routes.documents import router as documents_router
 from app.routes.chat_history import router as chat_history_router
 from app.routes.library import router as library_router
+from app.routes.profile import router as profile_router
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,6 +27,7 @@ app.include_router(user_router)
 app.include_router(documents_router)
 app.include_router(chat_history_router)
 app.include_router(library_router)
+app.include_router(profile_router)
 
 @app.get("/health")
 def health_check():

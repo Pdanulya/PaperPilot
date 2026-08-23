@@ -108,3 +108,12 @@ export const libraryAPI = {
   getRecent: () => request("GET", "/library/recent"),
   getDashboard: () => request("GET", "/library/dashboard"),
 };
+
+// ─── Profile ───────────────────────────────────────────────────
+// ─── Profile ───────────────────────────────────────────────────
+export const profileAPI = {
+  get: () => request("GET", "/profile/"),
+
+  update: (profileData) =>
+    request("PUT", "/profile/", profileData),
+};
