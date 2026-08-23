@@ -14,7 +14,7 @@ import SavedItems from "./pages/SavedDocs";
 import DocumentWorkspace from "./pages/DocWorkSpace";
 import MultiDocumentAnalysis from "./pages/MultiDocumentAnalysis";
 import LandingPage from "./pages/Landing";
-
+import ProfilePage from "./pages/Profile";
 function App() {
   const { toast } = useApp();
 
@@ -97,6 +97,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>   
       
       {toast && (
