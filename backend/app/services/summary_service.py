@@ -1,4 +1,5 @@
 from google import genai
+from google.genai import errors
 from app.core.config import GEMINI_API_KEY
 
 client = genai.Client(
@@ -21,7 +22,7 @@ Document:
 {text}
 """
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.1-flash-lite",
         contents=prompt
     )
 
