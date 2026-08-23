@@ -13,6 +13,7 @@ import SearchDocuments from "./pages/Search";
 import SavedItems from "./pages/SavedDocs";
 import DocumentWorkspace from "./pages/DocWorkSpace";
 import MultiDocumentAnalysis from "./pages/MultiDocumentAnalysis";
+import LandingPage from "./pages/Landing";
 
 function App() {
   const { toast } = useApp();
@@ -20,6 +21,13 @@ function App() {
   return (
     <>
       <Routes>
+        <Route 
+          path="/" 
+          element={
+              <LandingPage />
+          } 
+        />
+
         <Route
           path="/dashboard"
           element={
