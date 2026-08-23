@@ -114,7 +114,7 @@ export default function Navbar() {
             onClick={() => setProfileOpen(!profileOpen)}
             className="w-9 h-9 bg-[#0B1B33] hover:bg-[#162a4a] text-white font-semibold text-sm rounded-full flex items-center justify-center transition-colors"
           >
-            PD
+            <User className="w-4 h-4" />
           </button>
 
           {/* Dropdown */}
