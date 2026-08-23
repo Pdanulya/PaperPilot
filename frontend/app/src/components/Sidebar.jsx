@@ -29,7 +29,7 @@ export default function Sidebar() {
       links: [
         {
           path: "/workspace",
-          title: "Workspace",
+          title: "Workspaces",
           icon: Workflow,
         },
       ],
@@ -48,7 +48,7 @@ export default function Sidebar() {
         },
         {
           path: "/saved",
-          title: "Saved Items",
+          title: "Quick Access",
           icon: Bookmark,
         },
       ],
