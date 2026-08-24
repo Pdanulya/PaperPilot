@@ -72,7 +72,7 @@ const handleUpload = async () => {
                   Upload Documents
                 </h1>
                 <p className="text-sm text-slate-500 mt-0.5">
-                  Import knowledge assets to feed your AI context matrix.
+                  Import your documents to analyze with Paperapilot AI.
                 </p>
               </div>
             </div>

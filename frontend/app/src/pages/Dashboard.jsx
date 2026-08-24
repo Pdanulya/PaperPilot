@@ -77,9 +77,6 @@ export default function Dashboard() {
 
           {/* Hero Banner matched perfectly to Left Login Panel */}
           <div className="bg-[#0B1B33] rounded-2xl p-9 mb-8 relative overflow-hidden shadow-sm">
-            {/* Elegant adjusted light gold & blue brand accent circles */}
-            <div className="absolute -right-16 -top-16 w-72 h-72 rounded-full bg-[rgba(229,186,115,0.06)]" />
-            <div className="absolute right-20 -bottom-20 w-44 h-44 rounded-full bg-[rgba(229,186,115,0.03)]" />
 
             <p className="text-[13px] text-slate-400 uppercase tracking-wider mb-1.5 relative font-semibold">
               {greeting()}, {user?.name}
