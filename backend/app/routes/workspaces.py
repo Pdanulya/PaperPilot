@@ -8,7 +8,8 @@ from app.models.workspace import Workspace
 from app.schemas.workspace import (
     WorkspaceCreate,
     WorkspaceUpdate,
-    WorkspaceResponse
+    WorkspaceResponse,
+    WorkspaceDetailResponse
 )
 from app.models.document import Document
 
@@ -238,3 +239,31 @@ def remove_document_from_workspace(
     return {
         "message": "Document removed from workspace"
     }
+
+# Get all documents inside a workspace
+@router.get(
+    "/{workspace_id}/documents",
+    response_model=WorkspaceDetailResponse
+)
+def get_workspace_documents(
+    workspace_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    workspace = (
+        db.query(Workspace)
+        .filter(
+            Workspace.id == workspace_id,
+            Workspace.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not workspace:
+        raise HTTPException(
+            status_code=404,
+            detail="Workspace not found"
+        )
+
+    return workspace
