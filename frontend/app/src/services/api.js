@@ -110,10 +110,28 @@ export const libraryAPI = {
 };
 
 // ─── Profile ───────────────────────────────────────────────────
-// ─── Profile ───────────────────────────────────────────────────
 export const profileAPI = {
   get: () => request("GET", "/profile/"),
 
   update: (profileData) =>
     request("PUT", "/profile/", profileData),
+};
+
+// ─── Workspaces ───────────────────────────────────────────────────
+export const workspacesAPI = {
+  getAll: () => request("GET", "/workspaces/"),
+  create: (workspaceData) =>
+    request("POST", "/workspaces/", workspaceData),
+  get: (id) =>
+    request("GET", `/workspaces/${id}`),
+  update: (id, workspaceData) =>
+    request("PUT", `/workspaces/${id}`, workspaceData),
+  delete: (id) =>
+    request("DELETE", `/workspaces/${id}`),
+  addDocument: (workspaceId, documentId) =>
+    request("POST", `/workspaces/${workspaceId}/documents/${documentId}`),
+  removeDocument: (workspaceId, documentId) =>
+    request("DELETE", `/workspaces/${workspaceId}/documents/${documentId}`),
+  getDocuments: (workspaceId) =>
+    request("GET", `/workspaces/${workspaceId}/documents`),
 };
