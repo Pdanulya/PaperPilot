@@ -4,6 +4,7 @@ import {ArrowLeft,Folder,FileText,Loader2,Plus,Trash2} from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { workspacesAPI } from "../services/api";
+import AddDocumentsModal from "../components/AddDocumentsModal";
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -11,10 +12,12 @@ export default function WorkspaceDetail() {
 
   const [workspace, setWorkspace] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showAddDocuments, setShowAddDocuments] = useState(false);
 
   useEffect(() => {
     loadWorkspace();
   }, [id]);
+
   const loadWorkspace = async () => {
     try {
       const data = await workspacesAPI.getDocuments(id);
@@ -25,6 +28,35 @@ export default function WorkspaceDetail() {
       setLoading(false);
     }
   };
+
+  const handleRemoveDocument = async (documentId) => {
+    const confirmed = window.confirm(
+        "Remove this document from the workspace?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+        await workspacesAPI.removeDocument(
+        workspace.id,
+        documentId
+        );
+
+        // Remove immediately from UI
+        setWorkspace((prev) => ({
+        ...prev,
+        documents: prev.documents.filter(
+            (doc) => doc.id !== documentId
+        ),
+        }));
+
+    } catch (err) {
+        console.error(
+        "Failed to remove document from workspace:",
+        err
+        );
+    }
+    };
 
   if (loading) {
     return (
@@ -81,6 +113,7 @@ export default function WorkspaceDetail() {
           </div>
 
           <button
+            onClick={() => setShowAddDocuments(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1B33]
             text-white text-sm font-medium hover:bg-[#162a4a]"
           >
@@ -132,6 +165,7 @@ export default function WorkspaceDetail() {
                     </p>
                   </div>
                   <button
+                    onClick={() => handleRemoveDocument(doc.id)}
                     className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -142,6 +176,14 @@ export default function WorkspaceDetail() {
           )}
         </div>
       </main>
+      {showAddDocuments && (
+        <AddDocumentsModal
+            workspaceId={workspace.id}
+            existingDocuments={workspace.documents || []}
+            onClose={() => setShowAddDocuments(false)}
+            onAdded={loadWorkspace}
+        />
+        )}
     </div>
   );
 }
