@@ -28,3 +28,9 @@ class Document(Base):
     saved_by = relationship("SavedDocument", back_populates="document", cascade="all, delete-orphan")
     views = relationship("DocumentView", back_populates="document", cascade="all, delete-orphan")
     # cascade ensures when a document is deleted, its saved records and view records are deleted too
+
+    workspaces = relationship(
+        "Workspace",
+        secondary="workspace_documents",
+        back_populates="documents"
+    )
