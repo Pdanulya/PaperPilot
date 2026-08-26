@@ -15,6 +15,9 @@ import DocumentWorkspace from "./pages/DocWorkSpace";
 import MultiDocumentAnalysis from "./pages/MultiDocumentAnalysis";
 import LandingPage from "./pages/Landing";
 import ProfilePage from "./pages/Profile";
+import Workspaces from "./pages/Workspaces";
+import WorkspaceDetail from "./pages/WorkspaceDetail";
+
 function App() {
   const { toast } = useApp();
 
@@ -91,6 +94,24 @@ function App() {
           element={
             <Layout>
               <MultiDocumentAnalysis/>
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/workspaces"
+          element={
+            <Layout>
+              <Workspaces />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/workspaces/:id"
+          element={
+            <Layout>
+              <WorkspaceDetail />
             </Layout>
           }
         />
