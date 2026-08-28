@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { workspacesAPI } from "../services/api";
 import AddDocumentsModal from "../components/AddDocumentsModal";
+import EditWorkspaceModal from "../components/EditWorkspaceModal";
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -58,6 +59,23 @@ export default function WorkspaceDetail() {
         err
         );
     }
+    };
+
+    const handleDeleteWorkspace = async () => {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete "${workspace.name}"?\n\nThe documents inside this workspace will not be deleted.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        await workspacesAPI.delete(workspace.id);
+
+        navigate("/workspaces");
+
+      } catch (err) {
+        console.error("Failed to delete workspace:", err);
+      }
     };
 
   if (loading) {
@@ -232,6 +250,18 @@ export default function WorkspaceDetail() {
             onClose={() => setShowAddDocuments(false)}
             onAdded={loadWorkspace}
         />
+        )}
+        {showEditModal && (
+          <EditWorkspaceModal
+            workspace={workspace}
+            onClose={() => setShowEditModal(false)}
+            onUpdated={(updatedWorkspace) => {
+              setWorkspace((prev) => ({
+                ...prev,
+                ...updatedWorkspace,
+              }));
+            }}
+          />
         )}
     </div>
   );
