@@ -85,6 +85,7 @@ export const documentsAPI = {
   search: (id, query) => request("POST", `/documents/${id}/search`, { query }),
   summary: (id) => request("POST", `/documents/${id}/summary`),
   compare: (documentIds, query) => request("POST", "/documents/compare", { document_ids: documentIds, query: query }),
+  getShared: (token) => request("GET", `/shared/${token}`),
 };
 
 // ─── Chat History ───────────────────────────────────────────────
