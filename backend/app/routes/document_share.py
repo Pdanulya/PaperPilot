@@ -15,6 +15,8 @@ from app.schemas.document_share import (
     SharedDocumentResponse
 )
 
+from app.services.email_service import send_document_share_email
+
 
 router = APIRouter(
     prefix="/documents",
@@ -71,6 +73,12 @@ def share_document(
 
     # 5. Create the URL that will eventually be sent by email
     share_url = f"http://localhost:5173/shared/{share_token}"
+
+    send_document_share_email(
+        recipient_email=request.recipient_email,
+        document_title=document.title,
+        share_url=share_url
+    )
 
     return DocumentShareResponse(
         message="Document shared successfully",

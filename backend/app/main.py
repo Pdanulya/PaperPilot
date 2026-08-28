@@ -7,7 +7,7 @@ from app.routes.library import router as library_router
 from app.routes.profile import router as profile_router
 from app.routes.workspaces import router as workspaces_router
 from app.routes.document_share import router as document_share_router
-from app.routes.document_share import router as public_router
+from app.routes.document_share import public_router
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -58,8 +58,18 @@ def custom_openapi():
         }
     }
 
+    # for path in openapi_schema["paths"]:
+    #     for method in openapi_schema["paths"][path]:
+    #         openapi_schema["paths"][path][method]["security"] = [
+    #             {"BearerAuth": []}
+    #         ]
     for path in openapi_schema["paths"]:
         for method in openapi_schema["paths"][path]:
+
+            # Public shared-document endpoints don't require JWT
+            if path.startswith("/shared/"):
+                continue
+
             openapi_schema["paths"][path][method]["security"] = [
                 {"BearerAuth": []}
             ]
