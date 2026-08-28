@@ -9,7 +9,6 @@ from fastapi import (
 )
 import uuid
 import os
-import io
 
 from sqlalchemy.orm import Session
 from typing import List
@@ -38,8 +37,7 @@ from app.services.summary_service import generate_summary
 from app.services.document_processor import extract_text_from_bytes
 
 from app.core.config import *   
-from app.services.cloudinary_service import (upload_document_to_cloudinary, delete_document_from_cloudinary)
-
+from app.services.b2_service import ( upload_document_to_b2, delete_document_from_b2)
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
 
@@ -81,10 +79,10 @@ def upload_document(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to process document: {str(e)}")
 
-    # Upload to Cloudinary
-    import uuid
+    # Upload to Backblaze B2
     unique_name = f"{uuid.uuid4()}{extension}"
-    cloudinary_result = upload_document_to_cloudinary(
+
+    b2_result = upload_document_to_b2(
         file_bytes,
         unique_name,
         current_user.id
@@ -111,9 +109,8 @@ def upload_document(
         document = Document(
             title=file.filename,
             file_type=extension,
-            file_path=cloudinary_result["secure_url"],      
-            cloudinary_public_id=cloudinary_result["public_id"],
-            cloudinary_url=cloudinary_result["secure_url"],
+            storage_key=b2_result["key"], 
+            storage_url=None,
             raw_text=raw_text,
             user_id=current_user.id
         )
@@ -145,8 +142,9 @@ def upload_document(
     except Exception as e:
         db.rollback()
 
-        # Clean up Cloudinary upload if DB fails
-        delete_document_from_cloudinary(cloudinary_result["public_id"])
+        # Clean up Backblaze B2 upload if DB fails
+        if "b2_result" in locals():
+            delete_document_from_b2(b2_result["key"])
 
         raise HTTPException(
             status_code=500,
@@ -238,13 +236,11 @@ def delete_document(
         .filter(DocumentChunk.document_id == doc_id)\
         .delete()
     
-    # 2. Delete from Cloudinary if it exists
-    if document.cloudinary_public_id:
-        delete_document_from_cloudinary(document.cloudinary_public_id)
+    # 2. Delete file from Backblaze B2
+    if document.storage_key:
+        delete_document_from_b2(document.storage_key)
 
-    # if os.path.exists(document.file_path):
-    #     os.remove(document.file_path)
-
+    # 3. Delete database record
     db.delete(document)
     db.commit()
 
