@@ -112,7 +112,7 @@ export default function SharedDocument() {
         {document.summary && (
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-[#0B1B33] mb-4">
-              AI Summary
+              AI GeneratedSummary
             </h2>
             <Markdown content={document.summary} />
           </div>

@@ -130,7 +130,7 @@ def get_shared_document(
         title=document.title,
         file_type=document.file_type,
         raw_text=document.raw_text,
-        summary=None,
+        summary=document.summary,
         shared_with=document_share.recipient_email,
         permission=document_share.permission
     )
