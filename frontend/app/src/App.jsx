@@ -17,6 +17,7 @@ import LandingPage from "./pages/Landing";
 import ProfilePage from "./pages/Profile";
 import Workspaces from "./pages/Workspaces";
 import WorkspaceDetail from "./pages/WorkspaceDetail";
+import SharedDocument from "./pages/SharedDocument";
 
 function App() {
   const { toast } = useApp();
@@ -119,6 +120,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/shared/:token" element={<SharedDocument />} />
       </Routes>   
       
       {toast && (

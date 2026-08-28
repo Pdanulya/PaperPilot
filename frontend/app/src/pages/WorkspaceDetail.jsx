@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {ArrowLeft,Folder,FileText,Loader2,Plus,Trash2} from "lucide-react";
+import {ArrowLeft,Folder,FileText,Loader2,Plus,Trash2,MoreVertical,Edit3,} from "lucide-react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { workspacesAPI } from "../services/api";
 import AddDocumentsModal from "../components/AddDocumentsModal";
+import EditWorkspaceModal from "../components/EditWorkspaceModal";
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -13,6 +14,8 @@ export default function WorkspaceDetail() {
   const [workspace, setWorkspace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddDocuments, setShowAddDocuments] = useState(false);
+  const [showActions, setShowActions] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     loadWorkspace();
@@ -56,6 +59,23 @@ export default function WorkspaceDetail() {
         err
         );
     }
+    };
+
+    const handleDeleteWorkspace = async () => {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete "${workspace.name}"?\n\nThe documents inside this workspace will not be deleted.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        await workspacesAPI.delete(workspace.id);
+
+        navigate("/workspaces");
+
+      } catch (err) {
+        console.error("Failed to delete workspace:", err);
+      }
     };
 
   if (loading) {
@@ -120,6 +140,53 @@ export default function WorkspaceDetail() {
             <Plus className="w-4 h-4" />
             Add Documents
           </button>
+          <div className="relative">
+
+          <button
+            onClick={() => setShowActions(!showActions)}
+            className="w-10 h-10 rounded-xl bg-white border border-slate-200
+                      flex items-center justify-center
+                      hover:bg-slate-50 transition-all"
+          >
+            <MoreVertical className="w-4 h-4 text-slate-600" />
+          </button>
+
+          {showActions && (
+
+            <div
+              className="absolute right-0 top-12 w-44 bg-white
+                        border border-slate-200 rounded-xl shadow-lg
+                        overflow-hidden z-20"
+            >
+
+              <button
+                onClick={() => {
+                  setShowEditModal(true);
+                  setShowActions(false);
+                }}
+                className="w-full flex items-center gap-2 px-4 py-3
+                          text-sm text-[#0B1B33]
+                          hover:bg-slate-50 text-left"
+              >
+                <Edit3 className="w-4 h-4" />
+                Edit Workspace
+              </button>
+
+              <button
+                onClick={handleDeleteWorkspace}
+                className="w-full flex items-center gap-2 px-4 py-3
+                          text-sm text-red-500
+                          hover:bg-red-50 text-left"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Workspace
+              </button>
+
+            </div>
+
+          )}
+
+        </div>
         </div>
 
         {/* Documents */}
@@ -183,6 +250,18 @@ export default function WorkspaceDetail() {
             onClose={() => setShowAddDocuments(false)}
             onAdded={loadWorkspace}
         />
+        )}
+        {showEditModal && (
+          <EditWorkspaceModal
+            workspace={workspace}
+            onClose={() => setShowEditModal(false)}
+            onUpdated={(updatedWorkspace) => {
+              setWorkspace((prev) => ({
+                ...prev,
+                ...updatedWorkspace,
+              }));
+            }}
+          />
         )}
     </div>
   );

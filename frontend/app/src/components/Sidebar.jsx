@@ -28,7 +28,7 @@ export default function Sidebar() {
     {
       links: [
         {
-          path: "/workspace",
+          path: "/workspaces",
           title: "Workspaces",
           icon: Workflow,
         },

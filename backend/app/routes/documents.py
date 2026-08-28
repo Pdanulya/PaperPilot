@@ -426,7 +426,8 @@ def generate_document_summary(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    document = (
+    document = ( 
+        # Verify the document exists and belongs to the current user
         db.query(Document)
         .filter(
             Document.id == document_id,
@@ -443,7 +444,13 @@ def generate_document_summary(
     
     summary_text = generate_summary(document.raw_text)
 
+    # Save the generated summary 
+    # The new summary replaces the previous summary in the frontend state.
+    document.summary = summary_text
+    db.commit()
+    db.refresh(document)
+
     return SummaryResponse(
-    document_id=document_id,
-    summary=summary_text
-)
+        document_id=document_id,
+        summary=summary_text
+    )

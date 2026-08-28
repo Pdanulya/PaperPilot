@@ -6,3 +6,4 @@ from .saved_document import SavedDocument
 from .document_view import DocumentView
 from .workspace import Workspace
 from .workspace_document import workspace_documents
+from .document_share import DocumentShare

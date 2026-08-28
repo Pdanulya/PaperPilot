@@ -6,6 +6,8 @@ from app.routes.chat_history import router as chat_history_router
 from app.routes.library import router as library_router
 from app.routes.profile import router as profile_router
 from app.routes.workspaces import router as workspaces_router
+from app.routes.document_share import router as document_share_router
+from app.routes.document_share import public_router
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,6 +32,8 @@ app.include_router(chat_history_router)
 app.include_router(library_router)
 app.include_router(profile_router)
 app.include_router(workspaces_router)
+app.include_router(document_share_router)
+app.include_router(public_router)
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "PaperPilot backend is running"}
@@ -54,8 +58,18 @@ def custom_openapi():
         }
     }
 
+    # for path in openapi_schema["paths"]:
+    #     for method in openapi_schema["paths"][path]:
+    #         openapi_schema["paths"][path][method]["security"] = [
+    #             {"BearerAuth": []}
+    #         ]
     for path in openapi_schema["paths"]:
         for method in openapi_schema["paths"][path]:
+
+            # Public shared-document endpoints don't require JWT
+            if path.startswith("/shared/"):
+                continue
+
             openapi_schema["paths"][path][method]["security"] = [
                 {"BearerAuth": []}
             ]
