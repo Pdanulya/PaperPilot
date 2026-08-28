@@ -11,13 +11,19 @@ from app.models.document_share import DocumentShare
 
 from app.schemas.document_share import (
     DocumentShareRequest,
-    DocumentShareResponse
+    DocumentShareResponse,
+    SharedDocumentResponse
 )
 
 
 router = APIRouter(
     prefix="/documents",
     tags=["Document Sharing"]
+)
+
+public_router = APIRouter(
+    prefix="/shared",
+    tags=["Shared Documents"]
 )
 
 @router.post(
@@ -71,4 +77,52 @@ def share_document(
         share_token=share_token,
         share_url=share_url,
         recipient_email=request.recipient_email
+    )
+
+@public_router.get(
+    "/{share_token}",
+    response_model=SharedDocumentResponse
+)
+def get_shared_document(
+    share_token: str,
+    db: Session = Depends(get_db)
+):
+    # Find the share record using the secure token
+    document_share = (
+        db.query(DocumentShare)
+        .filter(
+            DocumentShare.share_token == share_token
+        )
+        .first()
+    )
+
+    if not document_share:
+        raise HTTPException(
+            status_code=404,
+            detail="Shared document not found"
+        )
+
+    # Get the actual document
+    document = (
+        db.query(Document)
+        .filter(
+            Document.id == document_share.document_id
+        )
+        .first()
+    )
+
+    if not document:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found"
+        )
+
+    return SharedDocumentResponse(
+        document_id=document.id,
+        title=document.title,
+        file_type=document.file_type,
+        raw_text=document.raw_text,
+        summary=None,
+        shared_with=document_share.recipient_email,
+        permission=document_share.permission
     )

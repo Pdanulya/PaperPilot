@@ -7,6 +7,7 @@ from app.routes.library import router as library_router
 from app.routes.profile import router as profile_router
 from app.routes.workspaces import router as workspaces_router
 from app.routes.document_share import router as document_share_router
+from app.routes.document_share import router as public_router
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -32,6 +33,7 @@ app.include_router(library_router)
 app.include_router(profile_router)
 app.include_router(workspaces_router)
 app.include_router(document_share_router)
+app.include_router(public_router)
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "PaperPilot backend is running"}
