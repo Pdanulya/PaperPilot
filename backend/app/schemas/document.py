@@ -6,7 +6,7 @@ class DocumentResponse(BaseModel):
     id: int
     title: str
     file_type: str
-    file_path: str
+    storage_key: str
     uploaded_at: datetime
     # user_id: int
     raw_text: str | None = None
