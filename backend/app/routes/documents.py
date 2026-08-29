@@ -25,7 +25,7 @@ from app.models.document_view import DocumentView
 from app.schemas.document import DocumentResponse
 from app.schemas.search import (SearchRequest, SearchResponse, ChunkResponse)
 from app.schemas.chat import ChatRequest, ChatResponse
-from app.schemas.summary import SummaryResponse
+from app.schemas.summary import SummaryRequest, SummaryResponse
 from app.schemas.document_compare import CompareRequest, CompareResponse
 
 from app.services.chunking_service import chunk_text
@@ -87,22 +87,6 @@ def upload_document(
         unique_name,
         current_user.id
     )
-
-    # unique_filename = f"{uuid.uuid4()}{extension}"
-    # file_location = f"uploads/{unique_filename}"
-
-    # os.makedirs("uploads", exist_ok=True)
-    # with open(file_location, "wb") as buffer:
-    #     while chunk := file.file.read(1024 * 1024):
-    #         buffer.write(chunk)
-
-    # try:
-    #     raw_text = extract_text(file_location)
-    # except Exception as e:
-    #     raise HTTPException(
-    #         status_code=400,
-    #         detail=f"Failed to process document: {str(e)}"
-    #     )
 
     try:
         # Create document
@@ -419,6 +403,7 @@ def chat_with_document(
 )
 def generate_document_summary(
     document_id: int,
+    request: SummaryRequest,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -438,7 +423,7 @@ def generate_document_summary(
             detail="Document not found"
         )
     
-    summary_text = generate_summary(document.raw_text)
+    summary_text = generate_summary(document.raw_text, request.summary_type)
 
     # Save the generated summary 
     # The new summary replaces the previous summary in the frontend state.
