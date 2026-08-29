@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from "react";
-import {FileText, ArrowLeft} from "lucide-react";
+import {Share2, FileText, ArrowLeft} from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import {useParams, useNavigate} from "react-router-dom";
 
 import { documentsAPI } from "../services/api";
+import ShareDocumentModal from "../components/ShareDocumentModal";
 
 import DocumentSummary from "../components/DocumentSummary";
 import DocumentSearch from "../components/DocumentSearch";
@@ -15,6 +16,7 @@ export default function DocumentWorkspace() {
   const [expanded, setExpanded] = useState(false);
   const [document, setDocument] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     loadDocument();
@@ -31,6 +33,10 @@ export default function DocumentWorkspace() {
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleShare = () => {
+    setShowShareModal(true);
   };
 
   if (loading) {
@@ -54,33 +60,52 @@ export default function DocumentWorkspace() {
       <div className="flex flex-1 min-h-0">
         <Sidebar />
         <main className="flex-1 flex flex-col min-h-0 p-10">
+          
           {/* ================= HEADER ================= */}
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={() =>
-                navigate("/documents")
-              }
-              className="p-2 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-xl text-slate-600 transition-colors cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.01)]"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
+          <div className="flex items-center justify-between gap-4 mb-6">
 
-            <div className="flex items-center gap-3">
-              <FileText className="text-[#E5BA73]" />
-              <div>
-                <h1 className="text-2xl font-serif">
-                  {document.title}
-                </h1>
-                <p className="text-sm text-slate-500">
-                  {document.file_type.toUpperCase()}
-                  {" • "}
-                  Uploaded{" "}
-                  {new Date(
-                    document.uploaded_at
-                  ).toLocaleDateString()}
-                </p>
+            {/* LEFT: Back button + Document details */}
+            <div className="flex items-center gap-4 min-w-0">
+
+              <button
+                onClick={() => navigate("/documents")}
+                className="p-2.5 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-xl text-slate-600 transition-colors cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.01)] shrink-0"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-3 min-w-0">
+
+                <FileText className="text-[#E5BA73] w-6 h-6 shrink-0" />
+
+                <div className="min-w-0">
+
+                  <h1 className="text-2xl font-serif text-[#0B1B33] truncate">
+                    {document.title}
+                  </h1>
+
+                  <p className="text-sm text-slate-500 mt-1">
+                    {document.file_type.toUpperCase()}
+                    {" • "}
+                    Uploaded{" "}
+                    {new Date(
+                      document.uploaded_at
+                    ).toLocaleDateString()}
+                  </p>
+
+                </div>
               </div>
             </div>
+
+            {/* RIGHT: Share button */}
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1B33] text-white hover:bg-[#293953] disabled:opacity-50"
+            >
+              <Share2 className="w-4 h-4" />
+              Share Document
+            </button>
+
           </div>
 
           {/* ================= CONTENT ================= */}
@@ -120,6 +145,7 @@ export default function DocumentWorkspace() {
                 </button>
               </div>
             </div>
+            
             {/* SEARCH */}
             <DocumentSearch
               documentId={id}
@@ -137,6 +163,12 @@ export default function DocumentWorkspace() {
             />
           </div>
         </main>
+        <ShareDocumentModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          documentId={id}
+          documentTitle={document.title}
+        />
       </div>
     </div>
   );
