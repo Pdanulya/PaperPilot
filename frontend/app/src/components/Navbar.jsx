@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Share2, TrainFront, User, LogOut } from "lucide-react";
+import { TrainFront, User, LogOut } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -31,27 +31,6 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "PaperPilot",
-          text: "Check out PaperPilot!",
-          url: window.location.origin,
-        });
-      } catch (error) {
-        console.log("Share cancelled or failed:", error);
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.origin);
-        alert("Link copied to clipboard!");
-      } catch (error) {
-        console.error("Failed to copy link:", error);
-      }
-    }
-  };
 
   const handleLogout = () => {
     // Remove authentication data
@@ -97,15 +76,6 @@ export default function Navbar() {
 
       {/* Right Actions */}
       <div className="flex items-center gap-5 mr-10">
-
-        {/* Share */}
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-[#0B1B33] hover:bg-slate-50 transition-colors text-sm font-medium"
-        >
-          <Share2 className="w-4 h-4" />
-          Share
-        </button>
 
         {/* Profile */}
         <div ref={dropdownRef} className="relative">
