@@ -36,7 +36,7 @@ export default function DocumentSummary({ documentId }) {
           {generatingSummary ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
-            <Sparkles className="w-4 h-4 text-[#E5BA73]" />
+            <Sparkles className="w-4 h-4 " />
           )}
 
           Generate Summary
