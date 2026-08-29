@@ -67,7 +67,7 @@ export default function Register() {
         <div className="space-y-4 text-xs font-medium text-slate-300">
           <div className="flex items-center gap-3">
             <span className="text-[#E5BA73]"><Sparkles className="w-4 h-4" /></span>
-            <span>AI-powered summaries in seconds</span>
+            <span>Generate summaries in seconds</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[#E5BA73]"><MessageSquare className="w-4 h-4" /></span>
@@ -75,11 +75,11 @@ export default function Register() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[#E5BA73]"><Highlighter className="w-4 h-4" /></span>
-            <span>Smart highlight & annotation</span>
+            <span>Multi-document comparison</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[#E5BA73]"><Search className="w-4 h-4" /></span>
-            <span>Cross-document semantic search</span>
+            <span>Organize documents into workspaces</span>
           </div>
         </div>
       </div>
