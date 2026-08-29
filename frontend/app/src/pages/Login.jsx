@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Loader2, Astroid, MessageCircleMoreIcon, Search, Highlighter } from 'lucide-react';
+import { Loader2, Sparkles, MessageSquare, Highlighter, Search } from 'lucide-react';
 
 export default function Login() {
   const { login, loading } = useApp();
@@ -61,20 +61,20 @@ export default function Login() {
         {/* Feature Highlights */}
         <div className="space-y-4 text-xs font-medium text-slate-300">
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]"><Astroid/></span>
-            <span>AI-powered summaries in seconds</span>
+            <span className="text-[#E5BA73]"><Sparkles className="w-4 h-4" /></span>
+            <span>Generate summaries in seconds</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]"><MessageCircleMoreIcon/></span>
+            <span className="text-[#E5BA73]"><MessageSquare className="w-4 h-4" /></span>
             <span>Ask questions in plain language</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]"><Highlighter/></span>
-            <span>Smart highlight & annotation</span>
+            <span className="text-[#E5BA73]"><Highlighter className="w-4 h-4" /></span>
+            <span>Multi-document comparison</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#E5BA73]"><Search/></span>
-            <span>Cross-document semantic search</span>
+            <span className="text-[#E5BA73]"><Search className="w-4 h-4" /></span>
+            <span>Organize documents into workspaces</span>
           </div>
         </div>
       </div>

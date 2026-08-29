@@ -54,7 +54,7 @@ export default function LandingPage() {
       <div className="max-w-6xl">
 
         <p className="text-xs uppercase tracking-[0.18em] font-semibold text-[#b8955b] mb-6">
-          Your documents, understood.
+          Your documents, intelligently understood.
         </p>
 
         <h1
