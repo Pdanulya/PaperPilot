@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, Mail, Share2, Loader2 } from "lucide-react";
 import { documentsAPI } from "../services/api";
+import { useApp } from "../context/AppContext";
 
 export default function ShareDocumentModal({
   isOpen,
@@ -8,8 +9,10 @@ export default function ShareDocumentModal({
   documentId,
   documentTitle,
 }) {
+  const { showToast } = useApp();
 
   const [email, setEmail] = useState("");
+  const [sharing, setSharing] = useState(false);
 
   if (!isOpen) return null;
 
@@ -18,29 +21,34 @@ export default function ShareDocumentModal({
 
     if (!email.trim()) return;
 
+    setSharing(true);
+
     try {
-        const response = await documentsAPI.share(documentId, {
+      await documentsAPI.share(documentId, {
         recipient_email: email.trim(),
-        });
+      });
 
-        console.log("Document shared:", response);
+      showToast(
+        `Document shared successfully with ${email.trim()}!`,
+        "success"
+      );
 
-        alert("Document shared successfully!");
-
-        setEmail("");
-        onClose();
+      setEmail("");
+      onClose();
 
     } catch (err) {
-        console.error("Failed to share document:", err);
-
-        alert(
-        err?.response?.data?.detail ||
-        "Failed to share document. Please try again."
-        );
+      showToast(
+        err.message || "Failed to share document. Please try again.",
+        "error"
+      );
+    } finally {
+      setSharing(false);
     }
   };
 
   const handleClose = () => {
+    if (sharing) return;
+
     setEmail("");
     onClose();
   };
@@ -69,7 +77,8 @@ export default function ShareDocumentModal({
 
           <button
             onClick={handleClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+            disabled={sharing}
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -96,7 +105,8 @@ export default function ShareDocumentModal({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@gmail.com"
               required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0B1B33] placeholder:text-slate-400 outline-none focus:border-[#0B1B33] focus:ring-1 focus:ring-[#0B1B33]/10 transition-all"
+              disabled={sharing}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0B1B33] placeholder:text-slate-400 outline-none focus:border-[#0B1B33] focus:ring-1 focus:ring-[#0B1B33]/10 transition-all disabled:bg-slate-50"
             />
           </div>
 
@@ -105,27 +115,34 @@ export default function ShareDocumentModal({
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+              disabled={sharing}
+              className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              disabled={!email.trim()}
+              disabled={!email.trim() || sharing}
               className="px-5 py-2.5 rounded-xl bg-[#0B1B33] text-white text-sm font-medium hover:bg-[#293953] disabled:opacity-40 disabled:cursor-not-allowed transition"
             >
               <span className="flex items-center gap-2">
-                <Share2 className="w-4 h-4" />
-                Share
+                {sharing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sharing...
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </>
+                )}
               </span>
             </button>
-
           </div>
-
         </form>
       </div>
     </div>
   );
 }
-
