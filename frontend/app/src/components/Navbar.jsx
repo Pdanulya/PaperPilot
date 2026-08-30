@@ -1,18 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TrainFront, User, LogOut } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const navTabs = [
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/documents", label: "Documents" },
-    { path: "/search", label: "Search" },
-    { path: "/saved", label: "Saved" },
-  ];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -33,11 +26,9 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    // Remove authentication data
     localStorage.removeItem("access_token");
     localStorage.removeItem("token");
 
-    // Redirect to login
     navigate("/login");
   };
 
@@ -50,29 +41,10 @@ export default function Navbar() {
           <TrainFront className="w-6 h-6" />
         </div>
 
-        <span className="text-[#17048f] font-sanserif text-2xl font-medium tracking-wide">
+        <span className="text-[#17048f] font-sans text-2xl font-medium tracking-wide">
           Paper<span className="text-[#E5BA73]">Pilot</span>
         </span>
       </div>
-
-      {/* Navigation */}
-      <nav className="flex items-center gap-3">
-        {navTabs.map((tab) => (
-          <NavLink
-            key={tab.path}
-            to={tab.path}
-            className={({ isActive }) =>
-              `px-5 py-2 text-sm font-medium rounded-lg transition-all ${
-                isActive
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              }`
-            }
-          >
-            {tab.label}
-          </NavLink>
-        ))}
-      </nav>
 
       {/* Right Actions */}
       <div className="flex items-center gap-5 mr-10">
@@ -87,7 +59,7 @@ export default function Navbar() {
             <User className="w-4 h-4" />
           </button>
 
-          {/* Dropdown */}
+          {/* Profile Dropdown */}
           {profileOpen && (
             <div className="absolute right-0 top-12 w-48 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-fade-in">
 
@@ -113,9 +85,11 @@ export default function Navbar() {
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>
+
             </div>
           )}
         </div>
+
       </div>
     </header>
   );
