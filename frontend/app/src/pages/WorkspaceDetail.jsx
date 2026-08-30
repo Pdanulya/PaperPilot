@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {ArrowLeft,Folder,FileText,Loader2,Plus,Trash2,MoreVertical,Edit3,} from "lucide-react";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,6 +16,24 @@ export default function WorkspaceDetail() {
   const [showAddDocuments, setShowAddDocuments] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  const actionsRef = useRef(null);
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      actionsRef.current &&
+      !actionsRef.current.contains(event.target)
+    ) {
+      setShowActions(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
   useEffect(() => {
     loadWorkspace();
@@ -140,8 +158,7 @@ export default function WorkspaceDetail() {
             <Plus className="w-4 h-4" />
             Add Documents
           </button>
-          <div className="relative">
-
+          <div className="relative" ref={actionsRef}>
           <button
             onClick={() => setShowActions(!showActions)}
             className="w-10 h-10 rounded-xl bg-white border border-slate-200
@@ -215,9 +232,10 @@ export default function WorkspaceDetail() {
           ) : (
             <div className="divide-y divide-slate-100">
               {workspace.documents.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-all"
+                <div 
+                  key={doc.id} 
+                  onClick={() => navigate(`/document/${doc.id}`)}
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-all cursor-pointer"
                 >
                   <div className="w-9 h-9 rounded-lg bg-[#0B1B33]/5 flex items-center justify-center">
                     <FileText className="w-4 h-4 text-[#0B1B33]" />
@@ -232,7 +250,9 @@ export default function WorkspaceDetail() {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleRemoveDocument(doc.id)}
+                    onClick={(e) => {e.stopPropagation();
+                      handleRemoveDocument(doc.id);
+                    }}
                     className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
