@@ -158,6 +158,8 @@ PaperPilot uses a **Retrieval-Augmented Generation (RAG)** pipeline to answer us
 PaperPilot/
 │
 ├── backend/
+│   ├── alembic/
+│   │
 │   ├── app/
 │   │   ├── core/
 │   │   ├── models/
@@ -166,21 +168,23 @@ PaperPilot/
 │   │   ├── services/
 │   │   └── main.py
 │   │
-│   ├── alembic/
 │   ├── requirements.txt
 │   └── .env
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
 │   │
-│   ├── package.json
-│   └── vite.config.js
+│   └── app/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── context/
+│       │   ├── pages/
+│       │   ├── services/
+│       │   ├── App.jsx
+│       │   └── main.jsx
+│       │
+│       ├── package.json
+│       ├── vite.config.js
+│       └── .env
 │
 ├── README.md
 │
@@ -283,12 +287,12 @@ http://localhost:8000/docs
 
 ## 🎨 Frontend Setup
 
-### 8️⃣ Navigate to the Frontend
+### 8️⃣ Navigate to the Frontend Application
 
-Open another terminal:
+Open another terminal from the project root:
 
 ```bash
-cd frontend
+cd frontend/app
 ```
 
 ### 9️⃣ Install Dependencies
@@ -299,7 +303,7 @@ npm install
 
 ### 🔟 Configure Environment Variables
 
-Create a `.env` file inside the `frontend` directory:
+Create a `.env` file inside `frontend/app`:
 
 ```env
 VITE_API_URL=http://localhost:8000
@@ -311,12 +315,11 @@ VITE_API_URL=http://localhost:8000
 npm run dev
 ```
 
-The application will run on:
+The application will usually run on:
 
 ```text
 http://localhost:5173
 ```
-
 ---
 
 ## 🌐 Deployment
