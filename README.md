@@ -14,53 +14,44 @@ PaperPilot uses a **Retrieval-Augmented Generation (RAG)** approach to provide A
 
 * Secure cloud-based document storage using Backblaze B2
 
----
 
 ### 🤖 AI Document Chat
 
 * Receive context-aware AI responses
 
----
 
 ### 📝 Customized AI Summaries
 
 * Generate summaries according to user preferences instead of using a fixed summary format
 
----
 
 ### 🔎 Semantic Search
 
 * Quickly find information across uploaded documents
 
----
 
 ### 📚 Workspaces
 
 * Create and manage workspaces
 
----
 
 ### 📊 Multi-Document Analysis
 
 * Compare and understand information from multiple sources in one place
 
----
 
 ### 🔖 Saving Documents
 
----
 
 ### 🔐 Authentication and Authorization
 
 * JWT-based authentication
 
----
 
 ### 🔗 Document Sharing
 
 * Generate shareable links for documents
 
----
 
 ## 🧠 RAG Pipeline
 
