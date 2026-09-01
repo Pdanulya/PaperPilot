@@ -19,22 +19,42 @@ export default function Login() {
   };
 
   // Submit and validate authentication credentials pipeline
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setSuccess('');
 
-    try {
-      await login(form.email, form.password);
+  // Check whether the required fields are empty
+  if (!form.email.trim() && !form.password.trim()) {
+    setError("Please enter your email address and password.");
+    return;
+  }
 
-      setSuccess("Login successful!");
+  if (!form.email.trim()) {
+    setError("Please enter your email address.");
+    return;
+  }
 
-      navigate("/dashboard");
+  if (!form.password.trim()) {
+    setError("Please enter your password.");
+    return;
+  }
 
-    } catch (err) {
-      setError(err.message || "Login failed");
-    }
-  };
+  try {
+    await login(form.email, form.password);
+
+    setSuccess("Login successful!");
+    navigate("/dashboard");
+
+  } catch (err) {
+    setError(
+      typeof err === "string"
+        ? err
+        : err?.message || "Invalid email or password."
+    );
+  }
+};
+
   
   return (
     <div className="flex min-h-screen font-sans antialiased text-[#0f172a]">
@@ -135,7 +155,7 @@ export default function Login() {
 
 
             {error && (
-              <div className="text-sm text-red-600">
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                 {error}
               </div>
             )}
