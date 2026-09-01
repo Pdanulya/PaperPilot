@@ -39,8 +39,12 @@ export default function Register() {
       }, 1500);
     
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
-    }
+        setError(
+          typeof err === "string"
+            ? err
+            : err?.message || "Registration failed. Please try again."
+        );
+      }
   };
 
   return (
@@ -142,13 +146,13 @@ export default function Register() {
             </div>
 
             {success && (
-              <div className="text-sm text-green-600">
+              <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
                 {success}
               </div>
             )}
 
             {error && (
-              <div className="text-sm text-red-600">
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                 {error}
               </div>
             )}
