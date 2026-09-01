@@ -8,52 +8,43 @@ PaperPilot uses a **Retrieval-Augmented Generation (RAG)** approach to provide A
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
-### 📤 Document Management
+###  Document Management
 
 * Secure cloud-based document storage using Backblaze B2
 
-
-### 🤖 AI Document Chat
+###  AI Document Chat
 
 * Receive context-aware AI responses
 
-
-### 📝 Customized AI Summaries
+###  Customized AI Summaries
 
 * Generate summaries according to user preferences instead of using a fixed summary format
 
-
-### 🔎 Semantic Search
+###  Semantic Search
 
 * Quickly find information across uploaded documents
 
-
-### 📚 Workspaces
+###  Workspaces
 
 * Create and manage workspaces
 
-
-### 📊 Multi-Document Analysis
+###  Multi-Document Analysis
 
 * Compare and understand information from multiple sources in one place
 
+###  Saving Documents
 
-### 🔖 Saving Documents
-
-
-### 🔐 Authentication and Authorization
+###  Authentication and Authorization
 
 * JWT-based authentication
 
-
-### 🔗 Document Sharing
+###  Document Sharing
 
 * Generate shareable links for documents
 
-
-## 🧠 RAG Pipeline
+##  RAG Pipeline
 
 PaperPilot uses a **Retrieval-Augmented Generation (RAG)** pipeline to answer user questions based on uploaded documents.
 
@@ -106,7 +97,7 @@ PaperPilot uses a **Retrieval-Augmented Generation (RAG)** pipeline to answer us
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 ### Frontend
 
@@ -152,7 +143,7 @@ PaperPilot uses a **Retrieval-Augmented Generation (RAG)** pipeline to answer us
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 PaperPilot/
@@ -193,9 +184,9 @@ PaperPilot/
 
 ---
 
-# ⚙️ Installation & Setup
+#  Installation & Setup
 
-## 1️⃣ Clone the Repository
+##  Clone the Repository
 
 ```bash
 git clone https://github.com/Pdanulya/PaperPilot.git
@@ -209,15 +200,15 @@ cd PaperPilot
 
 ---
 
-## 🖥 Backend Setup
+##  Backend Setup
 
-### 2️⃣ Navigate to the Backend
+###  Navigate to the Backend
 
 ```bash
 cd backend
 ```
 
-### 3️⃣ Create a Virtual Environment
+###  Create a Virtual Environment
 
 ```bash
 python -m venv venv
@@ -237,13 +228,13 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 4️⃣ Install Dependencies
+###  Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5️⃣ Configure Environment Variables
+###  Configure Environment Variables
 
 Create a `.env` file inside the `backend` directory and configure the required environment variables.
 
@@ -259,13 +250,13 @@ B2_APPLICATION_KEY=your_backblaze_application_key
 B2_BUCKET_NAME=your_bucket_name
 ```
 
-### 6️⃣ Run Database Migrations
+###  Run Database Migrations
 
 ```bash
 alembic upgrade head
 ```
 
-### 7️⃣ Start the Backend
+###  Start the Backend
 
 ```bash
 uvicorn app.main:app --reload
@@ -285,9 +276,9 @@ http://localhost:8000/docs
 
 ---
 
-## 🎨 Frontend Setup
+##  Frontend Setup
 
-### 8️⃣ Navigate to the Frontend Application
+###  Navigate to the Frontend Application
 
 Open another terminal from the project root:
 
@@ -295,13 +286,13 @@ Open another terminal from the project root:
 cd frontend/app
 ```
 
-### 9️⃣ Install Dependencies
+###  Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 🔟 Configure Environment Variables
+###  Configure Environment Variables
 
 Create a `.env` file inside `frontend/app`:
 
@@ -309,7 +300,7 @@ Create a `.env` file inside `frontend/app`:
 VITE_API_URL=http://localhost:8000
 ```
 
-### 1️⃣1️⃣ Start the Frontend
+###  Start the Frontend
 
 ```bash
 npm run dev
@@ -322,7 +313,7 @@ http://localhost:5173
 ```
 ---
 
-## 🌐 Deployment
+##  Deployment
 
 PaperPilot is deployed using separate services for the frontend, backend, and database.
 
